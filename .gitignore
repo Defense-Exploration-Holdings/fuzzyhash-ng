@@ -1,0 +1,28 @@
+# Zig
+.zig-cache/
+zig-cache/
+zig-out/
+zig-pkg/
+
+# Node
+node_modules/
+*.tgz
+npm-debug.log*
+
+# Generated
+packages/fuzzyhash-ng/wasm/
+dist/
+
+# Reference implementations built by scripts/fetch-oracles.sh
+.oracles/
+
+# Local toolchain installs
+.tools/
+
+# Editors and OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.orig
+*.rej

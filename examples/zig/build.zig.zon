@@ -1,0 +1,14 @@
+.{
+    .name = .fuzzyhash_example,
+    .version = "0.0.0",
+    .fingerprint = 0xe62c2c1ed6679830, // Changing this has security and trust implications.
+    .minimum_zig_version = "0.17.1",
+    .dependencies = .{
+        .fuzzyhash = .{ .path = "../.." },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}

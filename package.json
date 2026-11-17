@@ -1,0 +1,19 @@
+{
+  "name": "fuzzyhash-ng-workspace",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Development scripts for fuzzyhash-ng. The published package is packages/fuzzyhash-ng.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "zig build --release=small",
+    "test": "zig build check",
+    "test:zig": "zig build test",
+    "test:js": "zig build test-js",
+    "check:licenses": "node scripts/check-licenses.mjs",
+    "oracles": "scripts/fetch-oracles.sh"
+  }
+}

@@ -1,0 +1,41 @@
+name: Bug report
+description: A digest, score or distance that differs from ssdeep or TLSH, a crash, or behaviour that differs from the documentation.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what you got instead. For a wrong result, include the input (or how to generate it), the options, and the output of ssdeep 2.14.1 or TLSH 5.0.2 for the same input.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: A short script or command that shows the problem.
+  - type: input
+    id: version
+    attributes:
+      label: fuzzyhash-ng version
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where
+      options:
+        - npm package
+        - Zig module
+        - CLI
+    validations:
+      required: true
+  - type: input
+    id: runtime
+    attributes:
+      label: Runtime and platform
+      description: Node.js, Bun, Deno or browser with its version, or the Zig version and target.
+      placeholder: "Node.js 22.12 on Linux x86_64"
+    validations:
+      required: true

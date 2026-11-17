@@ -1,0 +1,146 @@
+# CI for fuzzyhash-ng. Every job installs Zig from the hash-pinned ziglang wheel in
+# scripts/zig-requirements.txt, so the toolchain is the one in .zig-version.
+#
+#   check          licence check, Zig and Node tests in debug and in the shipped mode
+#                  (small), the release build, and the example project
+#   zig-native     Zig tests on macOS and Windows
+#   zig-cross      Zig tests on 32-bit x86, aarch64 and big-endian s390x under QEMU
+#   oracles        builds the pinned ssdeep and TLSH reference programs
+version: 2.1
+
+executors:
+  linux:
+    docker:
+      - image: cimg/python:3.13-node
+    resource_class: medium
+
+commands:
+  install-zig:
+    description: Install the pinned Zig toolchain into ~/.local/bin
+    steps:
+      - run:
+          name: Install Zig
+          command: |
+            scripts/install-zig.sh "$HOME/.local"
+            echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$BASH_ENV"
+      - run: zig version
+
+jobs:
+  check:
+    executor: linux
+    steps:
+      - checkout
+      - install-zig
+      - run: node --version
+      - run:
+          name: Licence headers and GPL check
+          command: node scripts/check-licenses.mjs
+      - run:
+          name: Tests (debug)
+          command: zig build check --summary all
+      - run:
+          name: Tests (small, the shipped mode)
+          command: zig build check --release=small --summary all
+      - run:
+          name: Release build
+          command: zig build --release=small
+      - run:
+          name: Example project (depends on the package by path)
+          working_directory: examples/zig
+          command: zig build run
+      - store_artifacts:
+          path: zig-out
+          destination: zig-out
+
+  zig-native-macos:
+    macos:
+      xcode: "16.4.0"
+    resource_class: m4pro.medium
+    steps:
+      - checkout
+      - install-zig
+      - run: zig build test --summary all
+      - run: zig build test --release=fast --summary all
+
+  zig-native-windows:
+    machine:
+      image: windows-server-2022-gui:current
+    resource_class: windows.medium
+    shell: powershell.exe -ExecutionPolicy Bypass
+    steps:
+      - checkout
+      - run:
+          name: Install Zig (pinned wheel)
+          command: |
+            $ErrorActionPreference = 'Stop'
+            python -m venv "$env:USERPROFILE\zig-venv"
+            & "$env:USERPROFILE\zig-venv\Scripts\python.exe" -m pip install --disable-pip-version-check --quiet `
+              --require-hashes --only-binary=:all: --no-deps -r scripts/zig-requirements.txt
+            $dir = & "$env:USERPROFILE\zig-venv\Scripts\python.exe" -c "import ziglang, pathlib; print(pathlib.Path(ziglang.__file__).parent)"
+            Set-Content -Path "$env:USERPROFILE\zig-dir.txt" -Value $dir.Trim()
+      - run:
+          name: Zig tests
+          command: |
+            $ErrorActionPreference = 'Stop'
+            $env:PATH = (Get-Content "$env:USERPROFILE\zig-dir.txt") + ";" + $env:PATH
+            zig version
+            zig build test --summary all
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            zig build test --release=fast --summary all
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+  zig-cross:
+    executor: linux
+    parameters:
+      target:
+        type: string
+    steps:
+      - checkout
+      - install-zig
+      - run:
+          name: Install QEMU user mode
+          command: sudo apt-get update -q && sudo apt-get install -y -q qemu-user
+      - run: zig build test -fqemu -Dtarget=<< parameters.target >> --summary all
+
+  oracles:
+    executor: linux
+    steps:
+      - checkout
+      - run:
+          name: Build tools
+          command: sudo apt-get update -q && sudo apt-get install -y -q build-essential cmake
+      - restore_cache:
+          keys:
+            - oracles-v1-{{ checksum "scripts/fetch-oracles.sh" }}
+      - run:
+          name: Build ssdeep 2.14.1 and TLSH 5.0.2
+          command: scripts/fetch-oracles.sh .oracles
+      - save_cache:
+          key: oracles-v1-{{ checksum "scripts/fetch-oracles.sh" }}
+          paths:
+            - .oracles/ssdeep
+            - .oracles/tlsh-128-1
+            - .oracles/tlsh-128-3
+            - .oracles/tlsh-256-1
+            - .oracles/tlsh-256-3
+      - run:
+          name: Oracle smoke test
+          command: |
+            printf 'a' > /tmp/a.txt
+            .oracles/ssdeep/bin/ssdeep -s /tmp/a.txt
+            head -c 4096 /dev/urandom > /tmp/r.bin
+            for v in 128-1 128-3 256-1 256-3; do
+              .oracles/tlsh-$v/bin/tlsh_unittest -f /tmp/r.bin
+            done
+
+workflows:
+  ci:
+    jobs:
+      - check
+      - zig-native-macos
+      - zig-native-windows
+      - zig-cross:
+          matrix:
+            parameters:
+              target: [x86-linux, aarch64-linux, s390x-linux]
+      - oracles

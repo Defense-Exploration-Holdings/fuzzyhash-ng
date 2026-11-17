@@ -1,0 +1,49 @@
+{
+  "name": "fuzzyhash-ng",
+  "version": "0.0.0",
+  "private": true,
+  "description": "ssdeep and TLSH similarity digests, compiled from Zig to WebAssembly",
+  "keywords": [
+    "ssdeep",
+    "tlsh",
+    "fuzzy hash",
+    "ctph",
+    "similarity digest",
+    "dfir",
+    "webassembly"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Defense-Exploration-Holdings/fuzzyhash-ng.git",
+    "directory": "packages/fuzzyhash-ng"
+  },
+  "bugs": "https://github.com/Defense-Exploration-Holdings/fuzzyhash-ng/issues",
+  "homepage": "https://github.com/Defense-Exploration-Holdings/fuzzyhash-ng#readme",
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.d.mts",
+      "default": "./src/index.mjs"
+    },
+    "./ssdeep": {
+      "types": "./src/ssdeep.d.mts",
+      "default": "./src/ssdeep.mjs"
+    },
+    "./tlsh": {
+      "types": "./src/tlsh.d.mts",
+      "default": "./src/tlsh.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src/",
+    "wasm/",
+    "LICENSE",
+    "README.md"
+  ]
+}

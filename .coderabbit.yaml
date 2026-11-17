@@ -1,0 +1,90 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# CodeRabbit review settings for fuzzyhash-ng.
+language: en-US
+tone_instructions: >-
+  Be brief and specific. Point at the line, say what is wrong and why, and suggest a fix.
+  Skip praise and summaries of what the code already says.
+
+reviews:
+  profile: assertive
+  request_changes_workflow: false
+  high_level_summary: true
+  review_status: true
+  collapse_walkthrough: true
+  poem: false
+  sequence_diagrams: false
+  changed_files_summary: true
+  related_issues: true
+  related_prs: true
+  suggested_labels: false
+  suggested_reviewers: false
+  auto_review:
+    enabled: true
+    drafts: false
+  path_filters:
+    - "!zig-out/**"
+    - "!.zig-cache/**"
+    - "!packages/fuzzyhash-ng/wasm/**"
+    - "!LICENSES/**"
+    - "!**/package-lock.json"
+  path_instructions:
+    - path: "**/*"
+      instructions: |
+        Project rules that apply to every file:
+        - Digests, scores and distances must be bit-identical to ssdeep 2.14.1 and TLSH 5.0.2.
+          Flag any change that could alter output for some input, including "improvements".
+        - No runtime dependencies on any surface (Zig module, npm package, CLI).
+        - Writing (comments, docs, commit messages) is plain technical English. Flag em dashes
+          and filler or promotional wording; ask for the shorter, concrete sentence.
+    - path: "src/**/*.zig"
+      instructions: |
+        - No allocation, no recursion, no panics on any input, no std.Io or file access outside src/cli/.
+        - Every index must be bounded by construction: the small wasm build has no safety checks.
+          Failures return an error or a Status, never rely on a trap.
+        - Output must not depend on how input is split across update() calls.
+        - Byte order: no bitfield layouts or pointer casts that assume little-endian.
+        - Each file starts with an SPDX-License-Identifier line (MIT, or Apache-2.0 for code ported from TLSH).
+        - ssdeep code is a clean-room implementation. Flag anything that looks copied or translated
+          from ssdeep, SpamSum, ffuzzy or ppdeep sources.
+    - path: "src/wasm/**/*.zig"
+      instructions: |
+        Exports follow docs/abi.md: fixed memory, scratch region, i32 Status results, append-only status codes.
+        An incompatible export change must bump the ABI version in src/abi.zig and ABI_VERSION in the JS loader.
+    - path: "packages/fuzzyhash-ng/**"
+      instructions: |
+        - Hand-written .d.mts declarations must match the runtime exports.
+        - Scores are integers; TLSH with too little input returns null rather than throwing.
+        - Errors are FuzzyHashError with one of the documented codes.
+    - path: "test/**"
+      instructions: |
+        Tests must exercise behaviour: call the code and check what it returns or does.
+        Flag tests that only read repository files and assert on their text (docs, READMEs,
+        config contents, wording), and tests that cannot fail.
+        Expected digests come from the reference implementations, never from fuzzyhash itself.
+    - path: "scripts/**"
+      instructions: |
+        Downloads must be pinned and verified (commit hash or SHA-256). No curl | sh.
+    - path: ".circleci/**"
+      instructions: |
+        Pin images and tool versions. Never print secrets. Keep jobs runnable on forks without secrets.
+  tools:
+    shellcheck:
+      enabled: true
+    yamllint:
+      enabled: true
+    markdownlint:
+      enabled: true
+    actionlint:
+      enabled: true
+    gitleaks:
+      enabled: true
+    biome:
+      enabled: true
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  opt_out: false
+  learnings:
+    scope: local

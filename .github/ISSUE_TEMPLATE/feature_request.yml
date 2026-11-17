@@ -1,0 +1,15 @@
+name: Feature request
+description: Suggest an option, an API change or a CLI flag.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What do you need
+      description: The use case first, then the change you have in mind. Changes to digests or scores are out of scope; compatibility with ssdeep and TLSH is fixed.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
