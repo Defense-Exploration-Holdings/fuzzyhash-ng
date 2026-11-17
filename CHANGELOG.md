@@ -4,6 +4,12 @@ All notable changes to this project are listed here. The format follows [Keep a 
 
 ## Unreleased
 
+## 0.1.1 - 2026-11-17
+
+### Changed
+
+- No code changes. This is the first version published by the release workflow, with npm provenance; 0.1.0 was published by hand.
+
 ## 0.1.0 - 2026-11-17
 
 ### Added

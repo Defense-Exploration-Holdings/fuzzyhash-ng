@@ -1,6 +1,6 @@
 {
   "name": "fuzzyhash-ng",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ssdeep and TLSH similarity digests, compiled from Zig to WebAssembly",
   "keywords": [
     "ssdeep",
