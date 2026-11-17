@@ -4,6 +4,8 @@ All notable changes to this project are listed here. The format follows [Keep a 
 
 ## Unreleased
 
+## 0.2.0 - 2026-11-17
+
 ### Added
 
 - TLSH in the Zig module: `fuzzyhash.Tlsh.T1` (the standard digest) and `fuzzyhash.Tlsh.Tlsh(variant)` for the 128/3, 256/1 and 256/3 builds, each with a streaming hasher, `hash`, `Digest.toString` and `Digest.parse`, `diff` (with or without the length term) and `diffStrings`. Digests and distances match TLSH 5.0.2. Ported from TLSH under its Apache-2.0 option; the npm package licence is now `MIT AND Apache-2.0` and the package includes `LICENSES/`.
