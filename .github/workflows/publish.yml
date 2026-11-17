@@ -192,7 +192,15 @@ jobs:
             }'
 
       - name: Publish
-        run: npm publish "./release/fuzzyhash-ng-$VERSION.tgz" --access public --tag "$DIST_TAG"
+        run: |
+          set -euo pipefail
+          # A version already on npm (for example a first release published by hand) is
+          # left as it is, so the release job still runs for its tag.
+          if npm view "fuzzyhash-ng@$VERSION" version >/dev/null 2>&1; then
+            echo "fuzzyhash-ng@$VERSION is already on npm; not publishing it again."
+            exit 0
+          fi
+          npm publish "./release/fuzzyhash-ng-$VERSION.tgz" --access public --tag "$DIST_TAG"
 
   release:
     needs: [build, publish]

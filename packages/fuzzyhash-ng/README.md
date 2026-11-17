@@ -2,7 +2,7 @@
 
 ssdeep and TLSH similarity digests for JavaScript and TypeScript, compiled from Zig to WebAssembly. Digests, ssdeep scores and TLSH distances match ssdeep 2.14.1 and TLSH 5.0.2.
 
-> **Status: in development, not yet published.** ssdeep is in; TLSH arrives before 1.0.
+> **Status: in development.** ssdeep is in; TLSH arrives before 1.0. The `tlsh` entry point exports only `ready()` until then.
 
 Runs on Node.js 18 or newer, Bun, Deno and evergreen browsers. No runtime dependencies.
 

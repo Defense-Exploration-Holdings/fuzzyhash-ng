@@ -4,6 +4,8 @@ All notable changes to this project are listed here. The format follows [Keep a 
 
 ## Unreleased
 
+## 0.1.0 - 2026-11-17
+
 ### Added
 
 - ssdeep in the Zig module: `fuzzyhash.Ssdeep` (streaming hasher, `hash`, `Digest` with `toString` and `parse`, `compare`, `compareStrings`), with the `eliminate_sequences` and `no_truncate` options. Digests and scores match ssdeep 2.14.1, including 64-bit block sizes when comparing digest strings.

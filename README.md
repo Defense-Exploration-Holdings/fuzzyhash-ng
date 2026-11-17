@@ -4,7 +4,7 @@ ssdeep and TLSH similarity digests, written in Zig. One codebase ships as a Zig 
 
 The goal is exact compatibility: for every input, digests, ssdeep scores and TLSH distances are the same as those of **ssdeep 2.14.1** and **TLSH 5.0.2**. Every release is checked against those reference implementations.
 
-> **Status: in development.** Nothing is published yet and the API below is the planned v1.0 API. ssdeep is available in the Zig module and the npm package. TLSH and the CLI commands below land next.
+> **Status: in development.** 0.1.0 is an early release. The API below is the planned v1.0 API. ssdeep is available in the Zig module and the npm package. TLSH and the CLI commands below land next.
 
 ## What it does
 
