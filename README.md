@@ -1,10 +1,22 @@
 # fuzzyhash-ng
 
-ssdeep and TLSH similarity digests, written in Zig. One codebase ships as a Zig module, as an npm package that runs the same code compiled to WebAssembly, and as a small command-line tool.
+Fuzzy and similarity hashes in Zig, with results that match the reference implementations exactly.
 
-The goal is exact compatibility: for every input, digests, ssdeep scores and TLSH distances are the same as those of **ssdeep 2.14.1** and **TLSH 5.0.2**. Every release is checked against those reference implementations.
+## About
 
-> **Status: in development.** 0.1.0 is an early release. The API below is the planned v1.0 API. ssdeep is available in the Zig module and the npm package. TLSH and the CLI commands below land next.
+Fuzzy hashes tell you how alike two files are, not only whether they are identical. They help with malware triage, clustering and near-duplicate detection. fuzzyhash-ng puts the common ones in one dependency-free Zig codebase and ships it three ways: as a Zig module, as an npm package that runs the same code compiled to WebAssembly (Node, Bun, Deno and browsers), and as a small command-line tool.
+
+The goal is exact compatibility. For every input, each hash gives the same digest, score or distance as its reference implementation, and every release is checked against those references on the same test files. A change to any result for any input is treated as a breaking change.
+
+| Family | Hashes | Matches |
+|---|---|---|
+| Context-triggered piecewise | ssdeep | ssdeep 2.14.1 |
+| Locality-sensitive | TLSH (all four builds) | TLSH 5.0.2 |
+| Executables | imphash (PE), telfhash (ELF, including stripped binaries) | pefile 2024.8.26, telfhash 0.9.8 |
+| Images | aHash, dHash, pHash | ImageHash 4.3.2 |
+| Sets and text | MinHash, SimHash, Nilsimsa, LZJD | datasketch 2.0.0, simhash 2.1.2, nilsimsa 0.3.8, pyLZJD |
+
+> **Status: in development.** Every family above is in the Zig module. The npm package has ssdeep so far, and TLSH and the other families follow. The CLI commands are planned. The API below is the planned v1.0 API.
 
 ## What it does
 
