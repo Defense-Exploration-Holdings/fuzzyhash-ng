@@ -11,7 +11,7 @@
     "dfir",
     "webassembly"
   ],
-  "license": "MIT",
+  "license": "MIT AND Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Defense-Exploration-Holdings/fuzzyhash-ng.git",
@@ -43,6 +43,7 @@
     "src/",
     "wasm/",
     "LICENSE",
+    "LICENSES/",
     "README.md"
   ]
 }

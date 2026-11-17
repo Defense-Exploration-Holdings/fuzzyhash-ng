@@ -34,13 +34,15 @@ test('spdxOf reads line and block comment headers, after a shebang', () => {
   assert.equal(spdxOf('const x = 1;\n'), null);
 });
 
-test('expressionAllowed accepts MIT, Apache-2.0 and combinations of them only', () => {
+test('expressionAllowed accepts MIT, Apache-2.0, BSD-3-Clause, NCSA and combinations of them only', () => {
   assert.equal(expressionAllowed('MIT'), true);
   assert.equal(expressionAllowed('Apache-2.0'), true);
   assert.equal(expressionAllowed('MIT AND Apache-2.0'), true);
   assert.equal(expressionAllowed('(MIT OR Apache-2.0)'), true);
   assert.equal(expressionAllowed('GPL-2.0-only'), false);
-  assert.equal(expressionAllowed('MIT AND BSD-3-Clause'), false);
+  assert.equal(expressionAllowed('BSD-3-Clause'), true);
+  assert.equal(expressionAllowed('NCSA AND BSD-3-Clause'), true);
+  assert.equal(expressionAllowed('MIT AND MPL-2.0'), false);
   assert.equal(expressionAllowed(''), false);
 });
 
@@ -67,8 +69,8 @@ test('a source file without a header is reported', () => {
 });
 
 test('a source file under a licence that is not allowed is reported', () => {
-  withTree({ 'packages/fuzzyhash-ng/src/x.mjs': '// SPDX-License-Identifier: BSD-3-Clause\n' }, (root) => {
-    assert.match(check(root)[0], /licence "BSD-3-Clause" is not allowed/);
+  withTree({ 'packages/fuzzyhash-ng/src/x.mjs': '// SPDX-License-Identifier: MPL-2.0\n' }, (root) => {
+    assert.match(check(root)[0], /licence "MPL-2.0" is not allowed/);
   });
 });
 

@@ -9,13 +9,15 @@
 //   - any file that ships (the Zig package paths and the npm package files) contains a
 //     GPL licence identifier or the GPL licence text.
 //
-// TLSH code is ported under its Apache-2.0 option, so Apache-2.0 is allowed next to MIT.
+// TLSH code is ported under its Apache-2.0 option, and telfhash's disassembler code
+// and tables come from capstone (BSD-3-Clause, and NCSA for its LLVM-derived x86
+// decoder), so those are allowed next to MIT.
 
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-export const ALLOWED = new Set(['MIT', 'Apache-2.0']);
+export const ALLOWED = new Set(['MIT', 'Apache-2.0', 'BSD-3-Clause', 'NCSA']);
 
 /** Directories and files whose source files need an SPDX header. */
 export const HEADER_ROOTS = ['build.zig', 'src', 'packages/fuzzyhash-ng/src', 'packages/fuzzyhash-ng/wasm'];

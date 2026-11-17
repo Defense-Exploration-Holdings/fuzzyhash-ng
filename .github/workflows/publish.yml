@@ -104,8 +104,7 @@ jobs:
             if [ "$PRIVATE" = true ]; then
               printf '\nNot published to npm. The package tarball is attached.\n'
             else
-              printf '\n## Install\n\n```sh\nnpm install fuzzyhash-ng@%s\n```\n\n' "$VERSION"
-              printf 'Published with npm provenance.\n'
+              printf '\n## Install\n\n```sh\nnpm install fuzzyhash-ng@%s\n```\n' "$VERSION"
             fi
           } > release-notes/notes.md
           rm release-notes/changelog.md

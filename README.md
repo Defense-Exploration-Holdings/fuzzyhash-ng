@@ -74,6 +74,14 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full list of commands.
 | `docs/` | the WebAssembly ABI and other reference notes |
 | `examples/zig/` | a project that depends on the Zig package |
 
+## Sponsors
+
+<a href="https://appliku.com/"><img src="assets/sponsors/appliku.png" alt="Appliku" height="64"></a>
+&nbsp;&nbsp;
+<a href="https://github.com/speedpy/speedpy"><img src="assets/sponsors/speedpy.png" alt="SpeedPy" height="64"></a>
+
+[Appliku](https://appliku.com/) and [SpeedPy](https://github.com/speedpy/speedpy) support this project.
+
 ## License
 
-MIT, see [LICENSE](LICENSE). Code ported from TLSH is used under TLSH's Apache-2.0 option and keeps its own SPDX header; the TLSH licence and notice are in [LICENSES/](LICENSES/).
+MIT, see [LICENSE](LICENSE). Code ported from TLSH is used under TLSH's Apache-2.0 option and keeps its own SPDX header; the TLSH licence and notice are in [LICENSES/](LICENSES/). telfhash is ported from telfhash under Apache-2.0 the same way ([LICENSES/telfhash-LICENSE](LICENSES/telfhash-LICENSE)); its disassembler ports capstone's x86 decoder (NCSA, [LICENSES/capstone-LICENSE-LLVM](LICENSES/capstone-LICENSE-LLVM)) and tables derived from capstone's ARM and MIPS decoders (BSD-3-Clause, [LICENSES/capstone-LICENSE](LICENSES/capstone-LICENSE)). The imphash ordinal tables come from pefile (MIT, [LICENSES/pefile-LICENSE](LICENSES/pefile-LICENSE)). The image hashes port code from Pillow (MIT-CMU), ImageHash (BSD-2-Clause) and the ducc0 FFT used by scipy (BSD-3-Clause); their licences are in [LICENSES/](LICENSES/). SimHash's Unicode tables are derived from the Unicode Character Database ([LICENSES/Unicode-LICENSE](LICENSES/Unicode-LICENSE)).
