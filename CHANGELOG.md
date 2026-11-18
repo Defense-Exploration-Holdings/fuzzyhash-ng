@@ -4,6 +4,12 @@ All notable changes to this project are listed here. The format follows [Keep a 
 
 ## Unreleased
 
+## 0.3.1 - 2026-11-17
+
+### Changed
+
+- The package licence field is now `MIT`, so that JSR accepts it (JSR takes one SPDX identifier, not an expression). Nothing else changed: ported code keeps its Apache-2.0, BSD and NCSA headers, and their licences and notices still ship in `LICENSES/`. 0.3.0 was published to npm but not to JSR.
+
 ## 0.3.0 - 2026-11-17
 
 ### Added

@@ -1,6 +1,6 @@
 {
   "name": "fuzzyhash-ng",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "ssdeep, TLSH, imphash, telfhash, image hashes, MinHash, SimHash, LZJD and Nilsimsa, compiled from Zig to WebAssembly",
   "keywords": [
     "ssdeep",
@@ -18,7 +18,7 @@
     "nilsimsa",
     "webassembly"
   ],
-  "license": "MIT AND Apache-2.0",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Defense-Exploration-Holdings/fuzzyhash-ng.git",

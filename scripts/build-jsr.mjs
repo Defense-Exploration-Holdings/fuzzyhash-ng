@@ -53,6 +53,8 @@ export function checkConfig(pkgRoot = PKG_ROOT) {
   if (jsr.version !== want.version) problems.push(`version ${jsr.version} in jsr.json, ${want.version} in package.json`);
   if (jsr.license !== want.license) problems.push(`license ${jsr.license} in jsr.json, ${want.license} in package.json`);
   if (JSON.stringify(jsr.exports) !== JSON.stringify(want.exports)) problems.push('exports in jsr.json differ from the npm exports map');
+  // JSR accepts one SPDX licence identifier, not an expression such as "MIT AND Apache-2.0".
+  if (!/^[A-Za-z0-9.+-]+$/.test(jsr.license || '')) problems.push(`license ${jsr.license} in jsr.json is not a single SPDX identifier`);
   if (!NAME.test(jsr.name || '')) problems.push(`jsr.json name ${jsr.name} is not @scope/name`);
   for (const [key, file] of Object.entries(jsr.exports)) {
     if (!existsSync(join(pkgRoot, file))) problems.push(`${key}: ${file} does not exist`);

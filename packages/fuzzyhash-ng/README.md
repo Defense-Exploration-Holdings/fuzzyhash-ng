@@ -160,4 +160,4 @@ nilsimsaCompare(a, b);                           // -128 to 128
 
 ## License
 
-MIT AND Apache-2.0. Code ported from TLSH and telfhash is used under Apache-2.0; the other licences of ported code are in `LICENSES/`. See the [repository](https://github.com/Defense-Exploration-Holdings/fuzzyhash-ng) for source and documentation.
+MIT. Code ported from TLSH and telfhash is used under Apache-2.0 and keeps its own SPDX header. The licences and notices of all ported code ship in `LICENSES/`. See the [repository](https://github.com/Defense-Exploration-Holdings/fuzzyhash-ng) for source and documentation.
