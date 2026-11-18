@@ -10,9 +10,9 @@
 //   - any file that ships (the Zig package paths and the npm package files) contains a
 //     GPL licence identifier or the GPL licence text.
 //
-// TLSH code is ported under its Apache-2.0 option, and telfhash's disassembler code
-// and tables come from capstone (BSD-3-Clause, and NCSA for its LLVM-derived x86
-// decoder), so those are allowed next to MIT.
+// telfhash is ported under Apache-2.0, and its disassembler code and tables come
+// from capstone (BSD-3-Clause, and NCSA for its LLVM-derived x86 decoder), so those
+// are allowed next to MIT.
 
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';

@@ -43,7 +43,7 @@ reviews:
           Failures return an error or a Status, never rely on a trap.
         - Output must not depend on how input is split across update() calls.
         - Byte order: no bitfield layouts or pointer casts that assume little-endian.
-        - Each file starts with an SPDX-License-Identifier line (MIT, or Apache-2.0 for code ported from TLSH).
+        - Each file starts with an SPDX-License-Identifier line (MIT; Apache-2.0 for code ported from telfhash; BSD-3-Clause or NCSA for code from capstone).
         - ssdeep code is a clean-room implementation. Flag anything that looks copied or translated
           from ssdeep, SpamSum, ffuzzy or ppdeep sources.
     - path: "src/wasm/**/*.zig"

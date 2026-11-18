@@ -4,6 +4,12 @@ All notable changes to this project are listed here. The format follows [Keep a 
 
 ## Unreleased
 
+## 0.3.3 - 2026-11-18
+
+### Changed
+
+- TLSH (`src/tlsh.zig`) is now a clean-room implementation under MIT, written from the published description and checked against TLSH 5.0.2 as a black box. It replaces the port of the TLSH source, and `LICENSES/TLSH-LICENSE` and `LICENSES/TLSH-NOTICE.txt` are gone. Digests, distances and the API are unchanged: the new code gives the same results as TLSH 5.0.2 for all four builds. telfhash is still a port under Apache-2.0.
+
 ## 0.3.2 - 2026-11-17
 
 ### Changed

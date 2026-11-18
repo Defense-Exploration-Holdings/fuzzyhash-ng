@@ -31,7 +31,9 @@ Run `zig build check` in debug and with `--release=small` before sending a chang
 
 **ssdeep is a clean-room implementation.** ssdeep, SpamSum, ffuzzy and ppdeep are under licences this project cannot take code from. If you work on `src/ssdeep*.zig`, do not read their source. Work from the published description of the algorithm (Kornblum, "Identifying almost identical files using context triggered piecewise hashing", Digital Investigation 3S, 2006), from `docs/`, and from black-box comparison with the ssdeep program. The reference programs are only ever run as test oracles, never linked or copied.
 
-**TLSH is ported from `trendmicro/tlsh`** under its Apache-2.0 option. Ported files start with `// SPDX-License-Identifier: Apache-2.0` and keep Trend Micro's copyright line. `LICENSES/TLSH-LICENSE` and `LICENSES/TLSH-NOTICE.txt` are verbatim copies and must stay that way.
+**TLSH is a clean-room implementation too**, so that it can be MIT. If you work on `src/tlsh.zig`, do not read the source of TLSH (`trendmicro/tlsh`, including py-tlsh) or of any other TLSH port. Work from the published papers (Oliver, Cheng and Chen, "TLSH: A Locality Sensitive Hash", CTC 2013; Pearson, "Fast Hashing of Variable-Length Text Strings", CACM 1990) and from black-box comparison with the `tlsh_unittest` programs and py-tlsh.
+
+**telfhash is ported from `trendmicro/telfhash`** under Apache-2.0. `src/telfhash.zig` starts with `// SPDX-License-Identifier: Apache-2.0` and keeps Trend Micro's copyright line. `LICENSES/telfhash-LICENSE` and `LICENSES/telfhash-NOTICE.txt` are verbatim copies and must stay that way.
 
 **No dependencies, no allocation.** The Zig module allocates nothing and has no `std.Io` or file access; file handling lives in the CLI. The only allocator is in `src/wasm/heap.zig`, for the WebAssembly modules that take whole files or images. The npm package has no runtime dependencies.
 
@@ -69,4 +71,4 @@ Pull requests are welcome. Keep each one to a single change, describe what it ch
 
 ## Licensing
 
-By contributing you agree that your contribution is licensed under the MIT license of the project (see [LICENSE](LICENSE)), or under Apache-2.0 for changes to files ported from TLSH.
+By contributing you agree that your contribution is licensed under the MIT license of the project (see [LICENSE](LICENSE)), or under Apache-2.0 for changes to files ported from telfhash.
