@@ -3,6 +3,7 @@
 
 import type { Input } from './ssdeep-types.mjs';
 
+/** Options for `lzjd`. */
 export interface LzjdOptions {
   /** Digest size (default 1024): at most this many values, or exactly this many in SuperHash mode. */
   hashSize?: number;
@@ -14,6 +15,7 @@ export interface LzjdOptions {
   seed?: number;
 }
 
+/** An LZJD digest, as `lzjd` returns it. */
 export interface LzjdDigest {
   /** Int32Array in default mode (sorted), Float32Array in SuperHash mode. */
   digest: Int32Array | Float32Array;

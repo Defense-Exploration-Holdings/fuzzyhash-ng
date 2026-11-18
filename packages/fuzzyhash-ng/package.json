@@ -1,6 +1,6 @@
 {
   "name": "fuzzyhash-ng",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "ssdeep, TLSH, imphash, telfhash, image hashes, MinHash, SimHash, LZJD and Nilsimsa, compiled from Zig to WebAssembly",
   "keywords": [
     "ssdeep",
@@ -28,6 +28,7 @@
   "homepage": "https://github.com/Defense-Exploration-Holdings/fuzzyhash-ng#readme",
   "type": "module",
   "sideEffects": false,
+  "types": "./src/index.d.mts",
   "engines": {
     "node": ">=18"
   },

@@ -10,17 +10,23 @@ export type ImageFormat = 'L' | 'LA' | 'RGB' | 'RGBA';
  * follows from the data length.
  */
 export interface DecodedImage {
+  /** Pixels per row. */
   width: number;
+  /** Number of rows. */
   height: number;
+  /** Pixel bytes, row by row. */
   data: ArrayBufferView;
+  /** Pixel layout. Without it, it follows from the data length. */
   format?: ImageFormat;
 }
 
+/** Options for `averageHash`, `dhash` and `phash`. */
 export interface ImageHashOptions {
   /** ImageHash's `hash_size`: 4, 6, 8 (default), 10, 12, 14, 16, 20, 24, 28 or 32. */
   hashSize?: number;
 }
 
+/** Options for `phash`. */
 export interface PhashOptions extends ImageHashOptions {
   /** ImageHash's `highfreq_factor` (default 4). */
   highfreqFactor?: number;

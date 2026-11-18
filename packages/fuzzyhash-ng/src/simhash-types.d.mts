@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 Defense Exploration Holdings, LLC
 
+/** Options for `simhash` and `simhashFeatures`. */
 export interface SimhashOptions {
   /** Fingerprint width in bits, a multiple of 8 from 8 to 128 (default 64). */
   f?: number;

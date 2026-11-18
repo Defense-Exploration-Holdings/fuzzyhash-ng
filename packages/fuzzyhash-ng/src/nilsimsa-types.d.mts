@@ -11,8 +11,11 @@ export declare function nilsimsaCompare(a: string, b: string): number;
 
 /** Streaming hasher. `digest()` ends it; call it once. */
 export declare class NilsimsaHasher {
+  /** A new hasher with no input. */
   constructor();
+  /** Add bytes to the input. Returns the hasher. */
   update(input: Input): this;
+  /** The digest of everything passed to `update`. */
   digest(): string;
 }
 

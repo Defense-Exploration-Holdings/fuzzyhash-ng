@@ -11,6 +11,7 @@ export interface TlshVariant {
   checksum?: 1 | 3;
 }
 
+/** Options for TLSH hashing. */
 export interface TlshOptions extends TlshVariant {
   /** Require 256 bytes of input instead of 50. */
   conservative?: boolean;
@@ -18,6 +19,7 @@ export interface TlshOptions extends TlshVariant {
   prefix?: boolean;
 }
 
+/** Options for `tlshDiff`. */
 export interface TlshDiffOptions extends TlshVariant {
   /** Count the length term (default true, py-tlsh `diff`); false is py-tlsh `diffxlen`. */
   includeLength?: boolean;
@@ -39,8 +41,11 @@ export declare function tlshDiff(a: string, b: string, opts?: TlshDiffOptions): 
 
 /** Streaming hasher. `digest()` ends it; call it once. */
 export declare class TlshHasher {
+  /** A new hasher with no input. */
   constructor(opts?: TlshOptions);
+  /** Add bytes to the input. Returns the hasher. */
   update(input: Input): this;
+  /** The digest of everything passed to `update`. */
   digest(): string | null;
 }
 

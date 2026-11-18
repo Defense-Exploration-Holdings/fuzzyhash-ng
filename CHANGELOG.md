@@ -4,6 +4,13 @@ All notable changes to this project are listed here. The format follows [Keep a 
 
 ## Unreleased
 
+## 0.3.2 - 2026-11-17
+
+### Changed
+
+- Module documentation on every entry point, with an example, and documentation on the remaining exported types, fields and methods, for JSR and editors. No code changed.
+- `package.json` has a top-level `types` field pointing at `src/index.d.mts`, for tools that do not read the `exports` map.
+
 ## 0.3.1 - 2026-11-17
 
 ### Changed

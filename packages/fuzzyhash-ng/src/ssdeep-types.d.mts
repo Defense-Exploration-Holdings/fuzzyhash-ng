@@ -4,6 +4,7 @@
 /** Bytes to hash. Strings are encoded as UTF-8. */
 export type Input = Uint8Array | ArrayBuffer | ArrayBufferView | string;
 
+/** Options for ssdeep hashing. Both are off by default. */
 export interface SsdeepOptions {
   /** Keep at most three of any run of equal characters in the digest. */
   eliminateSequences?: boolean;
@@ -24,15 +25,21 @@ export declare function ssdeepCompare(a: string, b: string): number;
 
 /** Streaming hasher. `digest()` ends it; call it once. */
 export declare class SsdeepHasher {
+  /** A new hasher with no input. */
   constructor(opts?: SsdeepOptions);
+  /** Add bytes to the input. Returns the hasher. */
   update(input: Input): this;
+  /** The digest of everything passed to `update`. */
   digest(): string;
 }
 
+/** A digest split into its fields, as `parseSsdeep` returns it. */
 export interface ParsedSsdeep {
   /** A number, or a bigint when the value is above `Number.MAX_SAFE_INTEGER` (lenient mode only). */
   blockSize: number | bigint;
+  /** Hash part for the block size. */
   part1: string;
+  /** Hash part for twice the block size. */
   part2: string;
   /** Text after the comma, without the surrounding quotes, when present. */
   filename?: string;

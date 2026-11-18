@@ -4,6 +4,7 @@
 /** One item of a set: bytes, or a string as UTF-8. */
 export type MinHashItem = Uint8Array | ArrayBuffer | ArrayBufferView | string;
 
+/** Options for the `MinHash` constructor. */
 export interface MinHashOptions {
   /** Number of permutations: 16, 32, 64, 128 (default), 256 or 512. */
   numPerm?: number;
@@ -15,9 +16,13 @@ export interface MinHashOptions {
 
 /** `datasketch.MinHash` with its default SHA-1 hash functions. */
 export declare class MinHash {
+  /** An empty MinHash, as `MinHash(num_perm, seed)`. */
   constructor(opts?: MinHashOptions);
+  /** Number of permutations. */
   readonly numPerm: number;
+  /** Seed of the permutations. */
   readonly seed: number;
+  /** Hash scheme. */
   readonly scheme: 'affine32' | 'affine64' | 'legacy';
   /** `update(b)`. */
   update(item: MinHashItem): this;
