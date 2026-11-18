@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Defense Exploration Holdings, LLC
+#
 # Build the reference implementations that the differential tests compare against.
 #
 #   ssdeep 2.14.1   release tarball, verified by SHA-256, built with ./configure && make

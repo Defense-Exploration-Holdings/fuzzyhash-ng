@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 
 export { FuzzyHashError, type FuzzyHashErrorCode } from './errors.mjs';
+export * from './tlsh-types.mjs';
 
 /**
  * Compile the WebAssembly module ahead of the first call. Only needed where

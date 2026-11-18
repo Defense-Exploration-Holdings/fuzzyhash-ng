@@ -1,0 +1,192 @@
+name: Publish to JSR
+# Publishes packages/fuzzyhash-ng to JSR (jsr.io) as @defense-exploration/fuzzyhash-ng when a v* tag
+# is pushed, next to the npm release in publish.yml. It can also be run by hand for an existing tag
+# (Actions -> Publish to JSR -> Run workflow), for example if the JSR job failed.
+#
+# Two jobs, so that nothing that installs or runs third-party code can publish:
+#
+#   build    Checks the tag, builds the WebAssembly modules, runs the tests, stages the package
+#            (scripts/build-jsr.mjs), runs `deno publish --dry-run` (which includes the type checks)
+#            and a smoke test in Deno, and uploads the staged directory as a tarball with its SHA-256.
+#            Read-only token, no environment, no OIDC token.
+#   publish  Downloads the tarball, verifies the SHA-256 and runs `deno publish`. The only job that
+#            holds the OIDC token. It does not check out the repository or run any code of the package.
+#
+# Setup, once: on jsr.io, create the package @defense-exploration/fuzzyhash-ng in the
+# @defense-exploration scope and link it to this repository (package Settings -> GitHub Repository:
+# Defense-Exploration-Holdings/fuzzyhash-ng). `deno publish` then authenticates with the job's OIDC
+# token; no token is stored. The GitHub environment `jsr` is created by the first run; add
+# required reviewers there if a release should wait for a person.
+#
+# A version published to JSR cannot be changed or reused. A version that is already on JSR is
+# skipped, so running this again for a published tag does nothing.
+#
+# Pinned by hand: Deno (installed from npm, exact version). Actions are pinned by commit.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing release tag to publish, for example v1.2.3"
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jsr-publish
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.repository == 'Defense-Exploration-Holdings/fuzzyhash-ng'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    env:
+      RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      sha256: ${{ steps.pack.outputs.sha256 }}
+    steps:
+      - name: Check the release tag format
+        run: |
+          re='^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'
+          if [[ ! "$RELEASE_TAG" =~ $re ]]; then
+            shown="${RELEASE_TAG//[^0-9A-Za-z._-]/?}"
+            echo "::error::'$shown' is not a release tag such as v1.2.3 or v1.2.3-rc.1"
+            exit 1
+          fi
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/${{ env.RELEASE_TAG }}
+          persist-credentials: false
+
+      - name: Check the tag matches package.json and jsr.json
+        id: version
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./packages/fuzzyhash-ng/package.json').version")"
+          if [ "v$version" != "$RELEASE_TAG" ]; then
+            echo "::error::tag $RELEASE_TAG does not match packages/fuzzyhash-ng/package.json version $version"
+            exit 1
+          fi
+          node scripts/build-jsr.mjs --check
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - name: Install Zig
+        run: |
+          scripts/install-zig.sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Install Deno (npm package, exact version, no install scripts)
+        run: npm install -g --ignore-scripts deno@2.9.6
+
+      - name: Test the shipped mode
+        run: zig build check --release=small
+      - name: Build the WebAssembly modules (the shipped mode)
+        run: zig build js --release=small
+
+      - name: Stage the package
+        run: node scripts/build-jsr.mjs --out "$RUNNER_TEMP/jsr"
+      - name: Dry run (publish checks and types)
+        working-directory: ${{ runner.temp }}/jsr
+        run: deno publish --dry-run
+      - name: Smoke test the staged files in Deno
+        run: |
+          cat > "$RUNNER_TEMP/smoke.ts" <<'TS'
+          import { ssdeep, tlsh, nilsimsa } from "./jsr/src/index.mjs";
+          import { ssdeep as ssdeepOnly } from "./jsr/src/ssdeep.mjs";
+          const fox = "The quick brown fox jumps over the lazy dog";
+          const want = {
+            ssdeep: "3:FJKKIUKact:FHIGi",
+            tlsh: "T157E0024A21181298658A1884438D95B2C2CCC5147121141164306002180C1219CD8451",
+            nilsimsa: "02b0b4ae03001086d100c660ab88503545c14ae760282108390a2928020120db",
+          };
+          const got = { ssdeep: ssdeepOnly(fox), tlsh: tlsh(fox.repeat(8)), nilsimsa: nilsimsa(fox) };
+          for (const k of Object.keys(want) as (keyof typeof want)[]) {
+            if (got[k] !== want[k] || (k === "ssdeep" && ssdeep(fox) !== want.ssdeep)) {
+              console.error("mismatch", k, got[k]);
+              Deno.exit(1);
+            }
+          }
+          console.log("ok");
+          TS
+          cd "$RUNNER_TEMP" && deno check smoke.ts && deno run --no-prompt smoke.ts
+
+      - name: Pack the staged directory
+        id: pack
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir upload
+          tar --sort=name --owner=0 --group=0 --numeric-owner --mtime=@0 -C "$RUNNER_TEMP/jsr" -cf - . | gzip -n > "upload/jsr-package-$VERSION.tgz"
+          cd upload
+          sha256sum "jsr-package-$VERSION.tgz" | tee "jsr-package-$VERSION.tgz.sha256"
+          echo "sha256=$(cut -d' ' -f1 "jsr-package-$VERSION.tgz.sha256")" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: jsr-package
+          path: upload/
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs: build
+    if: github.repository == 'Defense-Exploration-Holdings/fuzzyhash-ng'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: jsr
+    permissions:
+      id-token: write # OIDC token for JSR; the job has no other permission
+    env:
+      VERSION: ${{ needs.build.outputs.version }}
+      EXPECTED_SHA256: ${{ needs.build.outputs.sha256 }}
+    steps:
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+      - name: Install Deno (npm package, exact version, no install scripts)
+        run: npm install -g --ignore-scripts deno@2.9.6
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: jsr-package
+          path: release
+
+      - name: Verify and unpack the package
+        run: |
+          set -euo pipefail
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]] || { echo "::error::bad version"; exit 1; }
+          [[ "$EXPECTED_SHA256" =~ ^[0-9a-f]{64}$ ]] || { echo "::error::bad checksum from the build job"; exit 1; }
+          cd release
+          tarball="jsr-package-$VERSION.tgz"
+          [ "$(ls | sort | tr '\n' ' ')" = "$tarball $tarball.sha256 " ] || { echo "::error::unexpected files in the artifact"; ls -la; exit 1; }
+          sha256sum -c "$tarball.sha256"
+          [ "$(sha256sum "$tarball" | cut -d' ' -f1)" = "$EXPECTED_SHA256" ] || { echo "::error::tarball differs from the build job's checksum"; exit 1; }
+          if tar -tzf "$tarball" | grep -E '(^/|(^|/)\.\.(/|$))'; then echo "::error::unsafe path in the tarball"; exit 1; fi
+          mkdir ../package
+          tar -xzf "$tarball" -C ../package --no-same-owner --no-same-permissions
+          cd ../package
+          node -e '
+            const j = JSON.parse(require("fs").readFileSync("jsr.json", "utf8"));
+            if (j.version !== process.env.VERSION || j.name !== "@defense-exploration/fuzzyhash-ng") {
+              console.error("::error::jsr.json does not match", j.name, j.version);
+              process.exit(1);
+            }'
+
+      - name: Publish
+        working-directory: package
+        run: |
+          set -euo pipefail
+          if curl -fsS "https://jsr.io/@defense-exploration/fuzzyhash-ng/meta.json" 2>/dev/null \
+              | node -e 'const m = JSON.parse(require("fs").readFileSync(0, "utf8")); process.exit(m.versions && m.versions[process.env.VERSION] ? 0 : 1)'; then
+            echo "@defense-exploration/fuzzyhash-ng@$VERSION is already on JSR; not publishing it again."
+            exit 0
+          fi
+          deno publish

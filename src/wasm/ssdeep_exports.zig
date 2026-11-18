@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 //! ssdeep exports, linked into the `ssdeep` and `fuzzy` modules. See
 //! docs/abi.md.
 //!

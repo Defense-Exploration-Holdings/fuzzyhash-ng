@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 //! Perceptual image hashes compatible with ImageHash 4.3.2: `average`
 //! (aHash), `difference` (dHash) and `perceptual` (pHash).
 //!

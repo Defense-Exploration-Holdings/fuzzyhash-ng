@@ -1,7 +1,7 @@
 {
   "name": "fuzzyhash-ng",
-  "version": "0.2.0",
-  "description": "ssdeep and TLSH similarity digests, compiled from Zig to WebAssembly",
+  "version": "0.3.0",
+  "description": "ssdeep, TLSH, imphash, telfhash, image hashes, MinHash, SimHash, LZJD and Nilsimsa, compiled from Zig to WebAssembly",
   "keywords": [
     "ssdeep",
     "tlsh",
@@ -9,6 +9,13 @@
     "ctph",
     "similarity digest",
     "dfir",
+    "imphash",
+    "telfhash",
+    "phash",
+    "minhash",
+    "simhash",
+    "lzjd",
+    "nilsimsa",
     "webassembly"
   ],
   "license": "MIT AND Apache-2.0",
@@ -36,6 +43,34 @@
     "./tlsh": {
       "types": "./src/tlsh.d.mts",
       "default": "./src/tlsh.mjs"
+    },
+    "./imphash": {
+      "types": "./src/imphash.d.mts",
+      "default": "./src/imphash.mjs"
+    },
+    "./telfhash": {
+      "types": "./src/telfhash.d.mts",
+      "default": "./src/telfhash.mjs"
+    },
+    "./imagehash": {
+      "types": "./src/imagehash.d.mts",
+      "default": "./src/imagehash.mjs"
+    },
+    "./minhash": {
+      "types": "./src/minhash.d.mts",
+      "default": "./src/minhash.mjs"
+    },
+    "./simhash": {
+      "types": "./src/simhash.d.mts",
+      "default": "./src/simhash.mjs"
+    },
+    "./lzjd": {
+      "types": "./src/lzjd.d.mts",
+      "default": "./src/lzjd.mjs"
+    },
+    "./nilsimsa": {
+      "types": "./src/nilsimsa.d.mts",
+      "default": "./src/nilsimsa.mjs"
     },
     "./package.json": "./package.json"
   },

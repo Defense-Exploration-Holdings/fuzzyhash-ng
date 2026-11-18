@@ -1,0 +1,26 @@
+{
+  "name": "@defense-exploration/fuzzyhash-ng",
+  "version": "0.3.0",
+  "license": "MIT AND Apache-2.0",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./ssdeep": "./src/ssdeep.mjs",
+    "./tlsh": "./src/tlsh.mjs",
+    "./imphash": "./src/imphash.mjs",
+    "./telfhash": "./src/telfhash.mjs",
+    "./imagehash": "./src/imagehash.mjs",
+    "./minhash": "./src/minhash.mjs",
+    "./simhash": "./src/simhash.mjs",
+    "./lzjd": "./src/lzjd.mjs",
+    "./nilsimsa": "./src/nilsimsa.mjs"
+  },
+  "publish": {
+    "include": [
+      "src/",
+      "wasm/",
+      "README.md",
+      "LICENSE",
+      "LICENSES/"
+    ]
+  }
+}

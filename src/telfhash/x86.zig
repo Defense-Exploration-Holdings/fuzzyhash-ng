@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: NCSA
+// Copyright (c) 2003-2013 University of Illinois at Urbana-Champaign
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
+//
 // Ported from capstone 5.0.9 (arch/X86/X86DisassemblerDecoder.c and
-// X86Disassembler.c), which derives from the LLVM X86 disassembler.
-// Copyright (c) 2003-2013 University of Illinois at Urbana-Champaign;
+// X86Disassembler.c), which derives from the LLVM X86 disassembler;
 // capstone changes by Nguyen Anh Quynh, 2013-2019. See
 // LICENSES/capstone-LICENSE-LLVM. Changes: rewritten in Zig, reduced to
 // what a linear sweep needs (instruction length, whether capstone accepts

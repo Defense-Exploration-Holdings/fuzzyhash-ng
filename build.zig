@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 //! Build graph for fuzzyhash-ng.
 //!
 //!   zig build              build the WebAssembly modules and the CLI into zig-out/
@@ -18,12 +19,30 @@ const zon = @import("build.zig.zon");
 
 /// Modules built for wasm32. Each root is src/wasm/<name>.zig and is embedded as
 /// packages/fuzzyhash-ng/wasm/<name>.mjs, so an npm entry point only loads its own code.
-const wasm_modules = [_][]const u8{ "ssdeep", "tlsh", "fuzzy" };
+/// `heap` modules link `fuzzy_alloc` / `fuzzy_free` and their memory can grow; the
+/// others have a fixed memory.
+const WasmModule = struct { name: []const u8, heap: bool };
+const wasm_modules = [_]WasmModule{
+    .{ .name = "ssdeep", .heap = false },
+    .{ .name = "tlsh", .heap = false },
+    .{ .name = "nilsimsa", .heap = false },
+    .{ .name = "imphash", .heap = true },
+    .{ .name = "telfhash", .heap = true },
+    .{ .name = "imagehash", .heap = true },
+    .{ .name = "minhash", .heap = true },
+    .{ .name = "simhash", .heap = true },
+    .{ .name = "lzjd", .heap = true },
+    .{ .name = "fuzzy", .heap = true },
+};
 
 /// Fixed linear memory: 2 pages = 128 KiB (64 KiB scratch, 16 KiB stack, data).
 /// initial == max, so memory never grows and JS may keep one view of it.
 const wasm_memory_bytes = 2 * 64 * 1024;
 const wasm_stack_bytes = 16 * 1024;
+/// Heap modules: up to 2 GiB, so that every address is below 2^31, and a 1 MiB
+/// stack (pHash and the x86 decoder need more than 16 KiB in debug builds).
+const wasm_heap_max_bytes = 2 * 1024 * 1024 * 1024;
+const wasm_heap_stack_bytes = 1024 * 1024;
 
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
@@ -62,7 +81,8 @@ pub fn build(b: *std.Build) void {
 
     const wasm_step = b.step("wasm", "Build zig-out/wasm/<module>.wasm");
     const js_step = b.step("js", "Embed the wasm modules for the npm package");
-    for (wasm_modules) |name| {
+    for (wasm_modules) |m| {
+        const name = m.name;
         const mod = b.createModule(.{
             .root_source_file = b.path(b.fmt("src/wasm/{s}.zig", .{name})),
             .target = wasm_target,
@@ -73,9 +93,14 @@ pub fn build(b: *std.Build) void {
         const exe = b.addExecutable(.{ .name = name, .root_module = mod });
         exe.entry = .disabled;
         exe.rdynamic = true;
-        exe.stack_size = wasm_stack_bytes;
-        exe.initial_memory = wasm_memory_bytes;
-        exe.max_memory = wasm_memory_bytes;
+        if (m.heap) {
+            exe.stack_size = wasm_heap_stack_bytes;
+            exe.max_memory = wasm_heap_max_bytes;
+        } else {
+            exe.stack_size = wasm_stack_bytes;
+            exe.initial_memory = wasm_memory_bytes;
+            exe.max_memory = wasm_memory_bytes;
+        }
 
         const install = b.addInstallArtifact(exe, .{ .dest_dir = .{ .override = .{ .custom = "wasm" } } });
         wasm_step.dependOn(&install.step);

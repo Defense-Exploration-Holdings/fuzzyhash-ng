@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 // Instantiates one embedded WebAssembly module, synchronously on first use or
 // asynchronously through ready(). See docs/abi.md.
 

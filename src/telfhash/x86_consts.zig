@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: NCSA
+// Copyright (c) 2003-2013 University of Illinois at Urbana-Champaign
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 // Generated from capstone 5.0.9 (arch/X86) by a table dump; do not edit.
 // Layout of x86_tables.bin and the decoder's enum values.
 

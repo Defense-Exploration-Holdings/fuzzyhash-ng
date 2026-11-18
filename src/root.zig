@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 //! fuzzyhash: ssdeep, TLSH, imphash, telfhash, image hashes, MinHash, SimHash, LZJD and Nilsimsa for Zig.
 //!
 //! This is the module root. It is target-agnostic: no WebAssembly or OS code,

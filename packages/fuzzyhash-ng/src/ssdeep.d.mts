@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 
 export { FuzzyHashError, type FuzzyHashErrorCode } from './errors.mjs';
 export * from './ssdeep-types.mjs';

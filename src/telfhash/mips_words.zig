@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
+// Copyright (c) 2013, COSEINC.
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 // Generated from capstone 5.0.9 by running its decoder on every 32-bit word; do not edit.
 // See telfhash/words.zig for the layout.
 

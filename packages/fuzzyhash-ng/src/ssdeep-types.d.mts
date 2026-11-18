@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 
 /** Bytes to hash. Strings are encoded as UTF-8. */
 export type Input = Uint8Array | ArrayBuffer | ArrayBufferView | string;

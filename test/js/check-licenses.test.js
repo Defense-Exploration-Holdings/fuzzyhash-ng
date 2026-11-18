@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 // scripts/check-licenses.mjs on small trees built for each case.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 //! Context-triggered piecewise hash compatible with ssdeep 2.14.1.
 //!
 //! The rolling hash follows Kornblum, Digital Investigation 3S (2006),

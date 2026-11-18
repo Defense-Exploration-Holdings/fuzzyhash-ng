@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 //! Conventions shared by every WebAssembly export. See docs/abi.md.
 
 /// Bumped on any incompatible change to the exports or their conventions. The
@@ -16,6 +17,13 @@ pub const Status = enum(i32) {
     insufficient_variation = 5,
     invalid_digest = 6,
     invalid_variant = 7,
+    /// The file or image is not one the reference can read.
+    invalid_input = 8,
+    /// The reference gives no result for this input, or the input needs a
+    /// feature this port does not have.
+    unsupported_input = 9,
+    /// Memory could not grow far enough.
+    out_of_memory = 10,
     _,
 
     pub fn code(s: Status) i32 {

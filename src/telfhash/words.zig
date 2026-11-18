@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
-// Reproduces the output of capstone 5.0.9 (Copyright (c) 2013, COSEINC,
-// BSD-3-Clause; see LICENSES/capstone-LICENSE) for the ARM and MIPS
-// instructions telfhash looks at.
+// Copyright (c) 2013, COSEINC.
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
+//
+// Reproduces the output of capstone 5.0.9 (BSD-3-Clause; see
+// LICENSES/capstone-LICENSE) for the ARM and MIPS instructions telfhash
+// looks at.
 
 //! ARM (ARM mode, little-endian) and MIPS32 (big-endian) for telfhash's
 //! call extraction. Both use 4-byte instruction words, so whether capstone

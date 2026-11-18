@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 //! MinHash compatible with datasketch 2.0.0 (`datasketch.MinHash`) and its
 //! default SHA-1 hash functions.
 //!

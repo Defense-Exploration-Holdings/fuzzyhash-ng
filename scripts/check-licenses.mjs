@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 // Licence check for the shipped tree.
 //
 //   node scripts/check-licenses.mjs [root]

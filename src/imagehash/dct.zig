@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 //! Unnormalized type-II DCT, computed with the same floating-point
 //! operations, in the same order, as scipy 1.18's `scipy.fftpack.dct`
 //! (the ducc0 real FFT, BSD-3-Clause, see LICENSES/ducc0-LICENSE). pHash
@@ -33,7 +34,7 @@ const Cmplx = struct { r: f64, i: f64 };
 /// ducc0's UnityRoots: the n-th roots of unity, from two small tables.
 const Roots = struct {
     n: usize,
-    shift: u6,
+    shift: std.math.Log2Int(usize),
     mask: usize,
     v1: [64]Cmplx = undefined,
     v2: [64]Cmplx = undefined,
@@ -68,7 +69,7 @@ const Roots = struct {
         const pi: f80 = 3.141592653589793238462643383279502884197;
         const ang: f64 = @floatCast(@as(f80, 0.25) * pi / @as(f80, @floatFromInt(n)));
         const nval = (n + 2) / 2;
-        var shift: u6 = 1;
+        var shift: std.math.Log2Int(usize) = 1;
         while ((@as(usize, 1) << shift) * (@as(usize, 1) << shift) < nval) shift += 1;
         const mask = (@as(usize, 1) << shift) - 1;
         var self: Roots = .{ .n = n, .shift = shift, .mask = mask };

@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
+// Copyright 2020 Trend Micro
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
+//
 // Ported from telfhash 0.9.8 (https://github.com/trendmicro/telfhash),
-// Copyright 2020 Trend Micro, Apache License 2.0; see LICENSES/telfhash-LICENSE
-// and LICENSES/telfhash-NOTICE.txt. Changes: rewritten in Zig on top of
+// Apache License 2.0; see LICENSES/telfhash-LICENSE and
+// LICENSES/telfhash-NOTICE.txt. Changes: rewritten in Zig on top of
 // tlsh.zig, with the ELF parsing done here instead of by pyelftools.
 //! telfhash, the symbol hash of ELF files, compatible with telfhash 0.9.8
 //! (trendmicro/telfhash) running on pyelftools 0.33 and py-tlsh 5.0.0.

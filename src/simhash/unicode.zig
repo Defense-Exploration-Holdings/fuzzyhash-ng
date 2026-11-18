@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 // Generated from Python 3.13.18 (Unicode 15.1.0) by private tooling.
 // Character classes and lowercase mappings that Python's str.lower()
 // and the regex [\w\u4e00-\u9fcc] use. Derived from the Unicode Character

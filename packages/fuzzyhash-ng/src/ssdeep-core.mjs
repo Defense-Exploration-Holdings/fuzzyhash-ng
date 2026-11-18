@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 // ssdeep functions over a loaded WebAssembly module. Used by the `ssdeep` and
 // main entry points, each with its own module. See docs/abi.md.
 

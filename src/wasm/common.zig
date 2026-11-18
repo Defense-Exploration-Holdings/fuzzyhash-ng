@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 //! Exports that every WebAssembly module carries: ABI and version metadata and
 //! the scratch region used for allocation-free calls.
 //!

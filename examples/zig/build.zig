@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 //! A project that uses fuzzyhash as a Zig package. Here the dependency is the
 //! repository itself (`.path = "../.."` in build.zig.zon); a real project adds
 //! it with `zig fetch --save`, see the README.

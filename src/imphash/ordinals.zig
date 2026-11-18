@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 // Ordinal to name tables for oleaut32.dll, ws2_32.dll and wsock32.dll, from
 // pefile 2024.8.26 (ordlookup), Copyright (c) 2004-2024 Ero Carrera. MIT licence,
 // see LICENSES/pefile-LICENSE. Generated; do not edit.

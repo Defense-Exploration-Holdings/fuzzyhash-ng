@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2013 Trend Micro Incorporated
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 //
 // Ported from TLSH 5.0.2 (trendmicro/tlsh, src/tlsh_impl.cpp and
 // src/tlsh_util.cpp), used under TLSH's Apache-2.0 option. See

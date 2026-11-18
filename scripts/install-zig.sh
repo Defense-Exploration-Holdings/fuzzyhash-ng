@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Defense Exploration Holdings, LLC
+#
 # Install the Zig version pinned in .zig-version, verifying what is downloaded.
 #
 # Strategy: install the official `ziglang` PyPI wheel (it bundles the real Zig

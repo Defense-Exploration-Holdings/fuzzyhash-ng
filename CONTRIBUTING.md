@@ -33,15 +33,15 @@ Run `zig build check` in debug and with `--release=small` before sending a chang
 
 **TLSH is ported from `trendmicro/tlsh`** under its Apache-2.0 option. Ported files start with `// SPDX-License-Identifier: Apache-2.0` and keep Trend Micro's copyright line. `LICENSES/TLSH-LICENSE` and `LICENSES/TLSH-NOTICE.txt` are verbatim copies and must stay that way.
 
-**No dependencies, no allocation.** The Zig module allocates nothing and has no `std.Io` or file access; file handling lives in the CLI. The npm package has no runtime dependencies.
+**No dependencies, no allocation.** The Zig module allocates nothing and has no `std.Io` or file access; file handling lives in the CLI. The only allocator is in `src/wasm/heap.zig`, for the WebAssembly modules that take whole files or images. The npm package has no runtime dependencies.
 
 ## Code layout
 
 - `src/root.zig`: the `fuzzyhash` module. Target-agnostic Zig with `test` blocks.
 - `src/abi.zig`: the ABI version, `Status` codes and the scratch layout shared by all WebAssembly exports.
-- `src/wasm/<module>.zig`: WebAssembly exports, the only files with `export fn`. Each module root imports `common.zig`. Add a module to `wasm_modules` in `build.zig`.
+- `src/wasm/<module>.zig`: WebAssembly exports, the only files with `export fn`. Each module root imports `common.zig`, and `heap.zig` when it needs memory beyond the scratch region. Add a module to `wasm_modules` in `build.zig`.
 - `src/cli/main.zig`: the command-line tool.
-- `packages/fuzzyhash-ng/src/`: the npm entry points, the loader and hand-written `.d.mts` declarations. Keep the declarations in step with the exports.
+- `packages/fuzzyhash-ng/src/`: the npm entry points, the loader and hand-written `.d.mts` declarations. Keep the declarations in step with the exports. `jsr.json` follows `package.json`: after changing the version or the entry points, run `node scripts/build-jsr.mjs --sync`.
 - [docs/abi.md](docs/abi.md): the calling convention between JavaScript and WebAssembly.
 
 Every source file under `src/` and `packages/fuzzyhash-ng/src/` starts with an `SPDX-License-Identifier` line. CI runs `scripts/check-licenses.mjs`, which also fails if a GPL identifier or licence text appears anywhere in the shipped tree.

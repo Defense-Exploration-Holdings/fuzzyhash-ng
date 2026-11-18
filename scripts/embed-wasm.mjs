@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 // Usage: node scripts/embed-wasm.mjs <in.wasm> <out.js>
 // Emits an ES module exporting the wasm bytes as a base64 string plus a decoder.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';

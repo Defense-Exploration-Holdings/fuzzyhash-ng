@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
+
 .{
     .name = .fuzzyhash_example,
     .version = "0.0.0",

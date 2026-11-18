@@ -4,6 +4,22 @@ All notable changes to this project are listed here. The format follows [Keep a 
 
 ## Unreleased
 
+## 0.3.0 - 2026-11-17
+
+### Added
+
+- Every family in the npm package, each with its own entry point and TypeScript declarations: `fuzzyhash-ng/tlsh` (`tlsh`, `tlshDiff`, `TlshHasher`, `tlshStream`, all four builds), `fuzzyhash-ng/imphash`, `fuzzyhash-ng/telfhash` (`telfhash`, `telfhashDiff`), `fuzzyhash-ng/imagehash` (`averageHash`, `dhash`, `phash`, `imageHashDistance`), `fuzzyhash-ng/minhash` (`MinHash`), `fuzzyhash-ng/simhash` (`simhash`, `simhashFeatures`, `simhashDistance`), `fuzzyhash-ng/lzjd` (`lzjd`, `lzjdSimilarity`) and `fuzzyhash-ng/nilsimsa` (`nilsimsa`, `nilsimsaCompare`, `NilsimsaHasher`, `nilsimsaStream`). The main entry point exports all of them. Results match the same references as the Zig module.
+- The package on JSR as `@defense-exploration/fuzzyhash-ng`, for Deno, published from the same release tag as npm.
+- `FuzzyHashError` codes `INVALID_INPUT`, `UNSUPPORTED_INPUT` and `OUT_OF_MEMORY`, and the matching `Status` codes 8 to 10.
+
+### Changed
+
+- The WebAssembly modules for imphash, telfhash, the image hashes, MinHash, SimHash and LZJD, and the main module, export `fuzzy_alloc` and `fuzzy_free`, and their memory can grow up to 2 GiB. The ssdeep, TLSH and Nilsimsa modules keep a fixed 128 KiB memory. See `docs/abi.md`.
+
+### Fixed
+
+- pHash failed to compile for 32-bit targets (a shift amount typed for 64-bit `usize`).
+
 ## 0.2.0 - 2026-11-17
 
 ### Added

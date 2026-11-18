@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 // ssdeep through the npm entry points. Expected digests and scores were
 // recorded from ssdeep 2.14.1.
 import { test } from 'node:test';

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 // Loader behaviour that does not depend on the real modules: ABI checks and
 // hosts without WebAssembly.
 import { test } from 'node:test';

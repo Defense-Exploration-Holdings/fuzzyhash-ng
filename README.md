@@ -1,5 +1,10 @@
 # fuzzyhash-ng
 
+[![npm](https://img.shields.io/npm/v/fuzzyhash-ng)](https://www.npmjs.com/package/fuzzyhash-ng)
+[![license](https://img.shields.io/npm/l/fuzzyhash-ng)](LICENSE)
+[![types](https://img.shields.io/npm/types/fuzzyhash-ng)](packages/fuzzyhash-ng/README.md)
+[![JSR](https://jsr.io/badges/@defense-exploration/fuzzyhash-ng)](https://jsr.io/@defense-exploration/fuzzyhash-ng)
+
 Fuzzy and similarity hashes in Zig, with results that match the reference implementations exactly.
 
 ## About
@@ -16,7 +21,7 @@ The goal is exact compatibility. For every input, each hash gives the same diges
 | Images | aHash, dHash, pHash | ImageHash 4.3.2 |
 | Sets and text | MinHash, SimHash, Nilsimsa, LZJD | datasketch 2.0.0, simhash 2.1.2, nilsimsa 0.3.8, pyLZJD |
 
-> **Status: in development.** Every family above is in the Zig module. The npm package has ssdeep so far, and TLSH and the other families follow. The CLI commands are planned. The API below is the planned v1.0 API.
+> **Status: in development.** Every family above is in the Zig module and in the npm and JSR packages. The CLI commands are planned. The API may still change before 1.0.
 
 ## What it does
 
@@ -29,19 +34,38 @@ The goal is exact compatibility. For every input, each hash gives the same diges
 
 Fuzzy hashes help with triage, clustering and near-duplicate detection. They are not a security boundary: an attacker can change a file so that its digest moves away from (or toward) another one. Do not use them as an allow-list.
 
-## Planned API
+## Install
 
-JavaScript and TypeScript (`npm install fuzzyhash-ng`, Node 18 or newer, Bun, Deno and browsers):
+```sh
+npm install fuzzyhash-ng
+```
+
+On Deno, from [JSR](https://jsr.io/@defense-exploration/fuzzyhash-ng):
+
+```sh
+deno add jsr:@defense-exploration/fuzzyhash-ng
+```
+
+## Usage
+
+JavaScript and TypeScript (Node 18 or newer, Bun, Deno and browsers). TypeScript declarations are included. See the [package README](packages/fuzzyhash-ng/README.md) for every function.
 
 ```js
-import { ssdeep, ssdeepCompare, tlsh, tlshDiff } from 'fuzzyhash-ng';
+import { ssdeep, ssdeepCompare, tlsh, tlshDiff, imphash, telfhash, phash, MinHash, simhash, lzjd, nilsimsa } from 'fuzzyhash-ng';
 
 const a = ssdeep(bytesA);          // '96:...:...'
-const b = ssdeep(bytesB);
-ssdeepCompare(a, b);               // integer from 0 to 100
+ssdeepCompare(a, ssdeep(bytesB));  // integer from 0 to 100
 
 tlsh(bytesA);                      // 'T1...' or null when the input is too short or too uniform
 tlshDiff(tlsh(bytesA), tlsh(bytesB));
+
+imphash(peBytes);                  // 32 hex characters, or null for a file without imports
+telfhash(elfBytes);                // 't1...', 'tnull' or '-'
+phash({ width, height, data });    // decoded pixels, for example a canvas ImageData
+new MinHash().updateBatch(words).jaccard(other);
+simhash('some text');              // bigint
+lzjd(bytesA).digest;               // Int32Array
+nilsimsa(bytesA);                  // 64 hex characters
 ```
 
 Zig (`zig fetch --save git+https://github.com/Defense-Exploration-Holdings/fuzzyhash-ng`):
@@ -55,7 +79,7 @@ h.update(chunk2);
 const digest = try h.final();
 ```
 
-Command line:
+Command line (planned):
 
 ```sh
 fuzzyhash ssdeep -r evidence/      # same output as `ssdeep -r`

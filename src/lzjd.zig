@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 //! LZJD (Lempel-Ziv Jaccard Distance) digests and similarity.
 //!
 //! The output is meant to be identical to pyLZJD at commit

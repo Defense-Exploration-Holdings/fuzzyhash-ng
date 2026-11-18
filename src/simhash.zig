@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 //! SimHash compatible with the `simhash` 2.1.2 Python package
 //! (`simhash.Simhash`) and its default MD5 feature hash.
 //!

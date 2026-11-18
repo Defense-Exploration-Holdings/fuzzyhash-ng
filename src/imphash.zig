@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 //! Import hash (imphash) of PE files, compatible with pefile 2024.8.26
 //! `PE.get_imphash()`.
 //!

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 // Entry point `fuzzyhash-ng/ssdeep`.
 
 import { wasmBytes } from '../wasm/ssdeep.mjs';

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Defense Exploration Holdings, LLC
 //! sin and cos as glibc computes them on x86-64 Linux, for the arguments
 //! the DCT twiddle factors use.
 //!

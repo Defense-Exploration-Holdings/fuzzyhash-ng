@@ -36,6 +36,9 @@ jobs:
           name: Licence headers and GPL check
           command: node scripts/check-licenses.mjs
       - run:
+          name: jsr.json matches package.json
+          command: node scripts/build-jsr.mjs --check
+      - run:
           name: Tests (debug)
           command: zig build check --summary all
       - run:
