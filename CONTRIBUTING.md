@@ -18,9 +18,11 @@ Other commands:
 zig build wasm --release=small     # zig-out/wasm/<module>.wasm
 zig build js                       # embed the modules for the npm package (check does this)
 zig build cli                      # zig-out/bin/fuzzyhash
+zig build dist                     # the CLI for every release target, in zig-out/dist/<target>/
 zig build run -- --help            # run the CLI
 node scripts/check-licenses.mjs    # SPDX headers and the GPL check on the shipped tree
 scripts/fetch-oracles.sh           # build ssdeep 2.14.1 and TLSH 5.0.2 into .oracles/
+node scripts/reference-vectors.mjs .oracles > test/reference/vectors.zig   # regenerate the saved results
 ```
 
 Run `zig build check` in debug and with `--release=small` before sending a change. Do not commit `zig-out/`, `.zig-cache/`, `.oracles/` or the generated `packages/fuzzyhash-ng/wasm/`.
@@ -42,7 +44,7 @@ Run `zig build check` in debug and with `--release=small` before sending a chang
 - `src/root.zig`: the `fuzzyhash` module. Target-agnostic Zig with `test` blocks.
 - `src/abi.zig`: the ABI version, `Status` codes and the scratch layout shared by all WebAssembly exports.
 - `src/wasm/<module>.zig`: WebAssembly exports, the only files with `export fn`. Each module root imports `common.zig`, and `heap.zig` when it needs memory beyond the scratch region. Add a module to `wasm_modules` in `build.zig`.
-- `src/cli/main.zig`: the command-line tool.
+- `src/cli/`: the command-line tool. `main.zig` dispatches to one file per command (`cmd_ssdeep.zig`, `cmd_digest.zig` for the `digest<TAB>path` commands, `cmd_compare.zig`); `walk.zig` turns path arguments into files; `tests.zig` runs commands on files in a temporary directory. See `docs/cli.md`.
 - `packages/fuzzyhash-ng/src/`: the npm entry points, the loader and hand-written `.d.mts` declarations. Keep the declarations in step with the exports. `jsr.json` follows `package.json`: after changing the version or the entry points, run `node scripts/build-jsr.mjs --sync`.
 - [docs/abi.md](docs/abi.md): the calling convention between JavaScript and WebAssembly.
 
@@ -53,6 +55,7 @@ Every source file under `src/` and `packages/fuzzyhash-ng/src/` starts with an `
 Tests exercise behaviour: they call the code and check what it returns or does. Do not add tests that read repository files and check their text.
 
 - Zig unit tests sit next to the code in `test` blocks and run with `zig build test`.
+- `test/reference/` checks ssdeep and TLSH (all four builds) against results saved from ssdeep 2.14.1 and TLSH 5.0.2 for a generated corpus of 171 inputs, with `zig build test`. `scripts/reference-vectors.mjs` regenerates `vectors.zig`; the corpus generator in it and `test/reference/corpus.zig` must stay in step.
 - Node tests in `test/js/` run against the built WebAssembly modules with `zig build test-js`.
 - Expected digests and scores come from the reference programs built by `scripts/fetch-oracles.sh`, never from fuzzyhash-ng itself.
 - Test inputs are generated (seeded PRNG) or taken from benign public corpora. Never add malware, samples from the wild or the EICAR string.

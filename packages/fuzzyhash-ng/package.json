@@ -1,6 +1,6 @@
 {
   "name": "fuzzyhash-ng",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "ssdeep, TLSH, imphash, telfhash, image hashes, MinHash, SimHash, LZJD and Nilsimsa, compiled from Zig to WebAssembly",
   "keywords": [
     "ssdeep",
@@ -18,7 +18,7 @@
     "nilsimsa",
     "webassembly"
   ],
-  "license": "MIT",
+  "license": "MIT AND Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND MIT-CMU AND NCSA AND Unicode-3.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Defense-Exploration-Holdings/fuzzyhash-ng.git",
@@ -30,7 +30,7 @@
   "sideEffects": false,
   "types": "./src/index.d.mts",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "exports": {
     ".": {

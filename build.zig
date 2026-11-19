@@ -6,6 +6,7 @@
 //!   zig build wasm         zig-out/wasm/<module>.wasm, one module per npm entry point
 //!   zig build js           embed the modules for the npm package (packages/fuzzyhash-ng/wasm/)
 //!   zig build cli          zig-out/bin/fuzzyhash
+//!   zig build dist         the CLI for every release target, ReleaseSafe, in zig-out/dist/<target>/
 //!   zig build test         Zig unit tests on the native target
 //!   zig build test-js      build and embed the modules, then run the Node test suite
 //!   zig build check        every test suite (Zig and JS)
@@ -43,6 +44,15 @@ const wasm_stack_bytes = 16 * 1024;
 /// stack (pHash and the x86 decoder need more than 16 KiB in debug builds).
 const wasm_heap_max_bytes = 2 * 1024 * 1024 * 1024;
 const wasm_heap_stack_bytes = 1024 * 1024;
+
+/// Targets that release binaries of the CLI are built for.
+const dist_targets = [_]std.Target.Query{
+    .{ .cpu_arch = .x86_64, .os_tag = .linux, .abi = .musl },
+    .{ .cpu_arch = .aarch64, .os_tag = .linux, .abi = .musl },
+    .{ .cpu_arch = .x86_64, .os_tag = .macos },
+    .{ .cpu_arch = .aarch64, .os_tag = .macos },
+    .{ .cpu_arch = .x86_64, .os_tag = .windows },
+};
 
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
@@ -127,6 +137,36 @@ pub fn build(b: *std.Build) void {
     b.step("cli", "Build zig-out/bin/fuzzyhash").dependOn(&install_cli.step);
     b.getInstallStep().dependOn(&install_cli.step);
 
+    // Release binaries are built with ReleaseSafe whatever -Doptimize says.
+    const dist_step = b.step("dist", "Build the CLI for every release target into zig-out/dist/<target>/");
+    for (dist_targets) |query| {
+        const t = b.resolveTargetQuery(query);
+        const dist_options = b.addOptions();
+        dist_options.addOption([]const u8, "version", zon.version);
+        const core = b.createModule(.{
+            .root_source_file = b.path("src/root.zig"),
+            .target = t,
+            .optimize = .ReleaseSafe,
+            .imports = &.{.{ .name = "build_options", .module = dist_options.createModule() }},
+        });
+        const exe = b.addExecutable(.{
+            .name = "fuzzyhash",
+            .root_module = b.createModule(.{
+                .root_source_file = b.path("src/cli/main.zig"),
+                .target = t,
+                .optimize = .ReleaseSafe,
+                .strip = true,
+                .imports = &.{.{ .name = "fuzzyhash", .module = core }},
+            }),
+        });
+        const triple = query.zigTriple(b.allocator) catch @panic("OOM");
+        const install = b.addInstallArtifact(exe, .{
+            .dest_dir = .{ .override = .{ .custom = b.fmt("dist/{s}", .{triple}) } },
+            .pdb_dir = .disabled,
+        });
+        dist_step.dependOn(&install.step);
+    }
+
     const run_cli = b.addRunArtifact(cli);
     run_cli.addPassthruArgs();
     b.step("run", "Run the CLI (zig build run -- <args>)").dependOn(&run_cli.step);
@@ -137,6 +177,14 @@ pub fn build(b: *std.Build) void {
     test_step.dependOn(&b.addRunArtifact(lib_tests).step);
     const cli_tests = b.addTest(.{ .root_module = cli.root_module });
     test_step.dependOn(&b.addRunArtifact(cli_tests).step);
+    // ssdeep and TLSH against results saved from the reference programs.
+    const reference_tests = b.addTest(.{ .root_module = b.createModule(.{
+        .root_source_file = b.path("test/reference/reference_test.zig"),
+        .target = target,
+        .optimize = optimize,
+        .imports = &.{.{ .name = "fuzzyhash", .module = lib_mod }},
+    }) });
+    test_step.dependOn(&b.addRunArtifact(reference_tests).step);
 
     // The built CLI, run the way a user runs it.
     const cli_version = b.addRunArtifact(cli);

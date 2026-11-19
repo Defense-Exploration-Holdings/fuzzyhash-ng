@@ -7,7 +7,7 @@
  *
  * @example
  * ```ts
- * import { nilsimsa, nilsimsaCompare } from '@defense-exploration/fuzzyhash-ng/nilsimsa';
+ * import { nilsimsa, nilsimsaCompare } from 'fuzzyhash-ng/nilsimsa';
  *
  * const text = Array.from({ length: 400 }, (_, i) => `line ${(i * 7919) % 1009}`).join('\n');
  * const edited = text.replace('line 0', 'line zero');

@@ -7,7 +7,7 @@
  *
  * @example
  * ```ts
- * import { tlsh, tlshDiff } from '@defense-exploration/fuzzyhash-ng/tlsh';
+ * import { tlsh, tlshDiff } from 'fuzzyhash-ng/tlsh';
  *
  * const text = Array.from({ length: 400 }, (_, i) => `line ${(i * 7919) % 1009}`).join('\n');
  * const edited = text.replace('line 0', 'line zero');

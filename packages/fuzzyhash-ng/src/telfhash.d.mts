@@ -7,7 +7,7 @@
  *
  * @example
  * ```ts
- * import { telfhash, telfhashDiff } from '@defense-exploration/fuzzyhash-ng/telfhash';
+ * import { telfhash, telfhashDiff } from 'fuzzyhash-ng/telfhash';
  *
  * const a = telfhash(await Deno.readFile('a.elf'));
  * const b = telfhash(await Deno.readFile('b.elf'));

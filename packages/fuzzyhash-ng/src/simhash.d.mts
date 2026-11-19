@@ -7,7 +7,7 @@
  *
  * @example
  * ```ts
- * import { simhash, simhashDistance } from '@defense-exploration/fuzzyhash-ng/simhash';
+ * import { simhash, simhashDistance } from 'fuzzyhash-ng/simhash';
  *
  * const a = simhash('the quick brown fox');
  * const b = simhash('the quick brown dog');

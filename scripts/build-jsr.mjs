@@ -7,14 +7,16 @@
 //   node scripts/build-jsr.mjs --check       fail when jsr.json disagrees with package.json
 //   node scripts/build-jsr.mjs --out <dir>   stage the package into <dir> (created, must be empty or missing)
 //
-// package.json is the source of truth for the version, the licence and the entry points. Each npm
-// entry point `./<name>` becomes the JSR export `./<name>` with its `default` file.
+// package.json is the source of truth for the version, the licence and the entry points. Its licence
+// is an SPDX expression; jsr.json gets the first identifier of it, since JSR takes one. Each npm entry
+// point `./<name>` becomes the JSR export `./<name>` with its `default` file.
 //
 // Staging copies the files JSR needs into a directory outside the repository, so that the generated
 // wasm/ modules (ignored by git) are included. It puts `// @ts-self-types="./x.d.mts"` on the first
 // line of every module that has a declaration file next to it, because JSR does not look for .d.mts
 // files by itself, and points the declaration files at each other by their .d.mts names, because
-// Deno does not map `./x.mjs` to `./x.d.mts`. The files in the repository are not changed.
+// Deno does not map `./x.mjs` to `./x.d.mts`. The doc examples import the npm name; staging changes
+// them to the JSR name. The files in the repository are not changed.
 //
 // Prerequisite: `zig build js --release=small`. Nothing here publishes; `deno publish` in the
 // staged directory does, in .github/workflows/publish-jsr.yml.
@@ -41,8 +43,16 @@ export function jsrExports(pkg) {
   return out;
 }
 
+/**
+ * The JSR licence: JSR accepts one SPDX identifier, not an expression, so an expression such as
+ * "MIT AND Apache-2.0" becomes its first identifier. The full expression stays in package.json.
+ */
+export function jsrLicense(license) {
+  return String(license).split(/\s+(?:AND|OR)\s+/)[0].replace(/[()]/g, '');
+}
+
 export function derived(pkg, current) {
-  return { ...current, version: pkg.version, license: pkg.license, exports: jsrExports(pkg) };
+  return { ...current, version: pkg.version, license: jsrLicense(pkg.license), exports: jsrExports(pkg) };
 }
 
 export function checkConfig(pkgRoot = PKG_ROOT) {
@@ -82,6 +92,7 @@ export function stage(out, pkgRoot = PKG_ROOT) {
   const problems = checkConfig(pkgRoot);
   if (problems.length) throw new Error(problems.join('\n'));
   const jsr = readJson(join(pkgRoot, 'jsr.json'));
+  const npmName = readJson(join(pkgRoot, 'package.json')).name;
   if (existsSync(out) && readdirSync(out).length) throw new Error(`${out} is not empty`);
   for (const entry of jsr.publish.include) {
     if (!existsSync(join(pkgRoot, entry))) throw new Error(`missing ${entry} in ${pkgRoot} (run: zig build js --release=small)`);
@@ -93,9 +104,12 @@ export function stage(out, pkgRoot = PKG_ROOT) {
   const files = walk(join(out, 'src'));
   for (const decl of files.filter((f) => f.endsWith('.d.mts'))) {
     const text = readFileSync(decl, 'utf8');
-    const rewritten = text.replace(/from '\.\/([a-z0-9-]+)\.mjs'/g, (m, name) =>
-      existsSync(join(dirname(decl), `${name}.d.mts`)) ? `from './${name}.d.mts'` : m,
-    );
+    const rewritten = text
+      .replace(/from '\.\/([a-z0-9-]+)\.mjs'/g, (m, name) =>
+        existsSync(join(dirname(decl), `${name}.d.mts`)) ? `from './${name}.d.mts'` : m,
+      )
+      .replaceAll(`from '${npmName}'`, `from '${jsr.name}'`)
+      .replaceAll(`from '${npmName}/`, `from '${jsr.name}/`);
     if (rewritten !== text) writeFileSync(decl, rewritten);
     const source = decl.replace(/\.d\.mts$/, '.mjs');
     if (existsSync(source)) {

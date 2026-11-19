@@ -1,8 +1,24 @@
 # Changelog
 
-All notable changes to this project are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [semantic versioning](https://semver.org/). Any change to a digest, score or distance for any input is a major change.
+All notable changes to this project are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [semantic versioning](https://semver.org/). Any change to a digest, score or distance for any input is a breaking change: a major version from 1.0, a minor version before it.
 
 ## Unreleased
+
+## 0.4.0 - 2026-11-19
+
+### Added
+
+- The `fuzzyhash` command-line tool, built with `zig build cli`: `ssdeep` (hash mode and the `-m`, `-k` and `-x` matching modes, with standard output byte-identical to the `ssdeep` 2.14.1 program for the same options), `tlsh` (all four builds), `imphash`, `telfhash`, `lzjd`, `nilsimsa` and `compare`, which detects the kind of two digests and prints their score or distance. Every command takes `-r` for directories, reads standard input, and prints JSON lines with `--json`. See `docs/cli.md`.
+- `zig build dist` builds the tool with ReleaseSafe for Linux (x86_64, aarch64), macOS (x86_64, aarch64) and Windows (x86_64). Each GitHub Release has these binaries attached, packed with the licence files, and a `SHA256SUMS` file.
+- `test/reference/`: ssdeep and TLSH (all four builds) are checked against digests, scores and distances saved from ssdeep 2.14.1 and TLSH 5.0.2 for a generated corpus of 171 inputs and 72 pairs, in one-shot and streaming use. `scripts/reference-vectors.mjs` regenerates them from the programs `scripts/fetch-oracles.sh` builds.
+
+### Changed
+
+- Ported image hash code keeps its upstream licence and copyright lines: Pillow's resampler moved to `src/imagehash/resample.zig` (MIT-CMU), `src/imagehash.zig` is BSD-2-Clause (ImageHash) and `src/imagehash/dct.zig` is BSD-3-Clause (ducc0). They were marked MIT. SimHash's Unicode tables are marked `MIT AND Unicode-3.0`. No code or output changed.
+- The npm licence field is the full SPDX expression, `MIT AND Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND MIT-CMU AND NCSA AND Unicode-3.0`. JSR takes one identifier, so `jsr.json` keeps `MIT`.
+- The package needs Node 20 or newer (`engines`), and CI runs the Node tests on Node 20 as well as 22. Node 18 is end of life and was not tested.
+- The examples in the TypeScript declarations import the npm name (`fuzzyhash-ng`); the JSR build rewrites them to `@defense-exploration/fuzzyhash-ng`. Before, pasting one into a Node project failed.
+- The README imports each family from its own entry point, and states the pHash platform dependency and the unsupported pHash sizes.
 
 ## 0.3.3 - 2026-11-18
 

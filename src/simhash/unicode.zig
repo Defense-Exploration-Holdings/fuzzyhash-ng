@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT AND Unicode-3.0
 // Copyright (c) 2026 Defense Exploration Holdings, LLC
 // Generated from Python 3.13.18 (Unicode 15.1.0) by private tooling.
 // Character classes and lowercase mappings that Python's str.lower()

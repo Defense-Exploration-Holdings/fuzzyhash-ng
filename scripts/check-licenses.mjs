@@ -10,15 +10,17 @@
 //   - any file that ships (the Zig package paths and the npm package files) contains a
 //     GPL licence identifier or the GPL licence text.
 //
-// telfhash is ported under Apache-2.0, and its disassembler code and tables come
-// from capstone (BSD-3-Clause, and NCSA for its LLVM-derived x86 decoder), so those
-// are allowed next to MIT.
+// Ported code keeps its upstream licence: telfhash (Apache-2.0), capstone's
+// disassembler code and tables (BSD-3-Clause, and NCSA for its LLVM-derived x86
+// decoder), Pillow's resampler (MIT-CMU), ImageHash (BSD-2-Clause) and the ducc0
+// FFT (BSD-3-Clause), and SimHash's tables keep the Unicode data licence
+// (Unicode-3.0). Those are allowed next to MIT.
 
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-export const ALLOWED = new Set(['MIT', 'Apache-2.0', 'BSD-3-Clause', 'NCSA']);
+export const ALLOWED = new Set(['MIT', 'Apache-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'MIT-CMU', 'NCSA', 'Unicode-3.0']);
 
 /** Directories and files whose source files need an SPDX header. */
 export const HEADER_ROOTS = ['build.zig', 'src', 'packages/fuzzyhash-ng/src', 'packages/fuzzyhash-ng/wasm'];

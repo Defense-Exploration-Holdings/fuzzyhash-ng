@@ -1,10 +1,14 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BSD-3-Clause
+// Copyright (C) 2010-2019 Max-Planck-Society
 // Copyright (c) 2026 Defense Exploration Holdings, LLC
+//
+// Ported from the ducc0 real FFT used by scipy 1.18's `scipy.fftpack.dct`,
+// BSD 3-Clause License; see LICENSES/ducc0-LICENSE. Changes: rewritten in
+// Zig for the real-input lengths pHash uses.
 //! Unnormalized type-II DCT, computed with the same floating-point
-//! operations, in the same order, as scipy 1.18's `scipy.fftpack.dct`
-//! (the ducc0 real FFT, BSD-3-Clause, see LICENSES/ducc0-LICENSE). pHash
-//! compares DCT values against their median, so on flat or symmetric images
-//! the rounding noise decides bits; it has to be the same noise.
+//! operations, in the same order, as scipy 1.18's `scipy.fftpack.dct`.
+//! pHash compares DCT values against their median, so on flat or symmetric
+//! images the rounding noise decides bits; it has to be the same noise.
 //!
 //! Supported lengths: 1 to 1000 with every prime factor below 135. Longer
 //! lengths and larger prime factors take other code paths in ducc0

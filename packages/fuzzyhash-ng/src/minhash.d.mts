@@ -7,7 +7,7 @@
  *
  * @example
  * ```ts
- * import { MinHash } from '@defense-exploration/fuzzyhash-ng/minhash';
+ * import { MinHash } from 'fuzzyhash-ng/minhash';
  *
  * const a = new MinHash().updateBatch(['a', 'b', 'c']);
  * const b = new MinHash().updateBatch(['a', 'b', 'd']);

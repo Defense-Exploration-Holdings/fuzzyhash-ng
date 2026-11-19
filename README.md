@@ -11,17 +11,22 @@ Fuzzy and similarity hashes in Zig, with results that match the reference implem
 
 Fuzzy hashes tell you how alike two files are, not only whether they are identical. They help with malware triage, clustering and near-duplicate detection. fuzzyhash-ng puts the common ones in one dependency-free Zig codebase and ships it three ways: as a Zig module, as an npm package that runs the same code compiled to WebAssembly (Node, Bun, Deno and browsers), and as a small command-line tool.
 
-The goal is exact compatibility. For every input, each hash gives the same digest, score or distance as its reference implementation, and every release is checked against those references on the same test files. A change to any result for any input is treated as a breaking change.
+The goal is exact compatibility: for every input, each hash should give the same digest, score or distance as its reference implementation. The tests check this on saved results from the reference programs. For ssdeep and TLSH these come from a generated corpus run through ssdeep 2.14.1 and TLSH 5.0.2 (`test/reference/`); for the other families they are smaller sets of recorded vectors. A change to any result for any input is treated as a breaking change.
 
 | Family | Hashes | Matches |
 |---|---|---|
 | Context-triggered piecewise | ssdeep | ssdeep 2.14.1 |
 | Locality-sensitive | TLSH (all four builds) | TLSH 5.0.2 |
 | Executables | imphash (PE), telfhash (ELF, including stripped binaries) | pefile 2024.8.26, telfhash 0.9.8 |
-| Images | aHash, dHash, pHash | ImageHash 4.3.2 |
+| Images | aHash, dHash, pHash | ImageHash 4.3.2 (pHash as on x86-64 Linux) |
 | Sets and text | MinHash, SimHash, Nilsimsa, LZJD | datasketch 2.0.0, simhash 2.1.2, nilsimsa 0.3.8, pyLZJD |
 
-> **Status: in development.** Every family above is in the Zig module and in the npm and JSR packages. The CLI commands are planned. The API may still change before 1.0.
+Known limits:
+
+- pHash compares DCT values against their median, so on flat or symmetric images the last bit of rounding in `sin` and `cos` decides some hash bits. Results follow ImageHash on x86-64 Linux (glibc); ImageHash on other platforms can differ on those images. pHash sizes (`hash_size * highfreq_factor`) above 1000 or with a prime factor of 135 or more are not supported.
+- LZJD matches pyLZJD at a pinned commit, since pyLZJD has no release.
+
+> **Status: in development.** Every family above is in the Zig module and in the npm and JSR packages. The CLI has ssdeep, TLSH, imphash, telfhash, LZJD and Nilsimsa, and prebuilt binaries are attached to each GitHub Release. The API may still change before 1.0.
 
 ## What it does
 
@@ -48,10 +53,20 @@ deno add jsr:@defense-exploration/fuzzyhash-ng
 
 ## Usage
 
-JavaScript and TypeScript (Node 18 or newer, Bun, Deno and browsers). TypeScript declarations are included. See the [package README](packages/fuzzyhash-ng/README.md) for every function.
+JavaScript and TypeScript (Node 20 or newer, Bun, Deno and browsers). TypeScript declarations are included. See the [package README](packages/fuzzyhash-ng/README.md) for every function.
+
+Import each family from its own entry point (`fuzzyhash-ng/ssdeep`, `fuzzyhash-ng/tlsh`, ...). Each one loads only its own WebAssembly module: about 12 KB for ssdeep. The main entry point `fuzzyhash-ng` has every family in one module of about 700 KB, most of it the telfhash disassembler.
 
 ```js
-import { ssdeep, ssdeepCompare, tlsh, tlshDiff, imphash, telfhash, phash, MinHash, simhash, lzjd, nilsimsa } from 'fuzzyhash-ng';
+import { ssdeep, ssdeepCompare } from 'fuzzyhash-ng/ssdeep';
+import { tlsh, tlshDiff } from 'fuzzyhash-ng/tlsh';
+import { imphash } from 'fuzzyhash-ng/imphash';
+import { telfhash } from 'fuzzyhash-ng/telfhash';
+import { phash } from 'fuzzyhash-ng/imagehash';
+import { MinHash } from 'fuzzyhash-ng/minhash';
+import { simhash } from 'fuzzyhash-ng/simhash';
+import { lzjd } from 'fuzzyhash-ng/lzjd';
+import { nilsimsa } from 'fuzzyhash-ng/nilsimsa';
 
 const a = ssdeep(bytesA);          // '96:...:...'
 ssdeepCompare(a, ssdeep(bytesB));  // integer from 0 to 100
@@ -79,12 +94,14 @@ h.update(chunk2);
 const digest = try h.final();
 ```
 
-Command line (planned):
+Command line (`zig build cli`, then `zig-out/bin/fuzzyhash`; see [docs/cli.md](docs/cli.md)):
 
 ```sh
-fuzzyhash ssdeep -r evidence/      # same output as `ssdeep -r`
-fuzzyhash tlsh file.bin
-fuzzyhash compare DIGEST_A DIGEST_B
+fuzzyhash ssdeep -r evidence/                # same output as `ssdeep -r`
+fuzzyhash ssdeep -m known.txt -r samples/    # same matches as `ssdeep -m`
+fuzzyhash tlsh -r samples/                   # digest<TAB>path
+fuzzyhash telfhash /usr/bin/ls
+fuzzyhash compare DIGEST_A DIGEST_B          # ssdeep score, TLSH distance, ...
 ```
 
 ## Building from source
@@ -105,7 +122,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full list of commands.
 |---|---|
 | `src/` | the Zig module (`src/root.zig`), WebAssembly exports (`src/wasm/`) and the CLI (`src/cli/`) |
 | `packages/fuzzyhash-ng/` | the npm package: loader, entry points and TypeScript declarations |
-| `test/` | Node tests that run against the built modules |
+| `test/` | Node tests that run against the built modules, and ssdeep and TLSH checks against saved reference results |
 | `scripts/` | toolchain install, WebAssembly embedding, reference builds, licence check |
 | `docs/` | the WebAssembly ABI and other reference notes |
 | `examples/zig/` | a project that depends on the Zig package |
@@ -120,4 +137,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full list of commands.
 
 ## License
 
-MIT, see [LICENSE](LICENSE). telfhash is ported from telfhash under Apache-2.0 and keeps its own SPDX header ([LICENSES/telfhash-LICENSE](LICENSES/telfhash-LICENSE), [LICENSES/telfhash-NOTICE.txt](LICENSES/telfhash-NOTICE.txt)); its disassembler ports capstone's x86 decoder (NCSA, [LICENSES/capstone-LICENSE-LLVM](LICENSES/capstone-LICENSE-LLVM)) and tables derived from capstone's ARM and MIPS decoders (BSD-3-Clause, [LICENSES/capstone-LICENSE](LICENSES/capstone-LICENSE)). The imphash ordinal tables come from pefile (MIT, [LICENSES/pefile-LICENSE](LICENSES/pefile-LICENSE)). The image hashes port code from Pillow (MIT-CMU), ImageHash (BSD-2-Clause) and the ducc0 FFT used by scipy (BSD-3-Clause); their licences are in [LICENSES/](LICENSES/). SimHash's Unicode tables are derived from the Unicode Character Database ([LICENSES/Unicode-LICENSE](LICENSES/Unicode-LICENSE)).
+MIT, see [LICENSE](LICENSE). telfhash is ported from telfhash under Apache-2.0 and keeps its own SPDX header ([LICENSES/telfhash-LICENSE](LICENSES/telfhash-LICENSE), [LICENSES/telfhash-NOTICE.txt](LICENSES/telfhash-NOTICE.txt)); its disassembler ports capstone's x86 decoder (NCSA, [LICENSES/capstone-LICENSE-LLVM](LICENSES/capstone-LICENSE-LLVM)) and tables derived from capstone's ARM and MIPS decoders (BSD-3-Clause, [LICENSES/capstone-LICENSE](LICENSES/capstone-LICENSE)). The imphash ordinal tables come from pefile (MIT, [LICENSES/pefile-LICENSE](LICENSES/pefile-LICENSE)). The image hashes port Pillow's resampler (`src/imagehash/resample.zig`, MIT-CMU), ImageHash (`src/imagehash.zig`, BSD-2-Clause) and the ducc0 FFT used by scipy (`src/imagehash/dct.zig`, BSD-3-Clause); those files keep their upstream licence and copyright lines, and the licences are in [LICENSES/](LICENSES/). SimHash's Unicode tables are derived from the Unicode Character Database (Unicode-3.0, [LICENSES/Unicode-LICENSE](LICENSES/Unicode-LICENSE)). The npm package's licence field lists all of these as one SPDX expression; JSR accepts only one identifier, so it shows MIT.

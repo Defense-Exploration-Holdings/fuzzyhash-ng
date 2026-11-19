@@ -7,7 +7,7 @@
  *
  * @example
  * ```ts
- * import { lzjd, lzjdSimilarity } from '@defense-exploration/fuzzyhash-ng/lzjd';
+ * import { lzjd, lzjdSimilarity } from 'fuzzyhash-ng/lzjd';
  *
  * const text = Array.from({ length: 400 }, (_, i) => `line ${(i * 7919) % 1009}`).join('\n');
  * const edited = text.replace('line 0', 'line zero');

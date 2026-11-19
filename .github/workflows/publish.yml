@@ -6,11 +6,14 @@ name: Publish to npm
 #
 #   build    Checks the tag, builds, runs the tests, packs the tarball and uploads it
 #            with its SHA-256. Read-only token, no environment, no OIDC token.
+#            It also builds the CLI for every release target (`zig build dist`) and
+#            packages it with scripts/package-cli.sh.
 #   publish  Downloads that tarball, verifies the SHA-256 and runs `npm publish`.
 #            The only job that holds the OIDC token. It does not check out the
 #            repository, install dependencies or run build or test code.
 #   release  Creates the GitHub Release for the tag with the CHANGELOG section as its
-#            notes and the tarball and checksum attached. The only job with a write token.
+#            notes, and attaches the npm tarball and its checksum, the CLI archives and
+#            their SHA256SUMS. The only job with a write token.
 #
 # Setup, once: on npmjs.com, fuzzyhash-ng -> Settings -> Trusted Publisher -> GitHub Actions
 # with organization Defense-Exploration-Holdings, repository fuzzyhash-ng, workflow
@@ -53,6 +56,7 @@ jobs:
       dist_tag: ${{ steps.version.outputs.dist_tag }}
       private: ${{ steps.version.outputs.private }}
       sha256: ${{ steps.pack.outputs.sha256 }}
+      cli_sums: ${{ steps.cli.outputs.sums_sha256 }}
     steps:
       - name: Check the release tag format
         run: |
@@ -140,6 +144,21 @@ jobs:
           path: release/
           if-no-files-found: error
           retention-days: 7
+      - name: Build and package the CLI
+        id: cli
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          zig build dist
+          scripts/package-cli.sh "$VERSION" cli-release
+          echo "sums_sha256=$(sha256sum cli-release/SHA256SUMS | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: cli-binaries
+          path: cli-release/
+          if-no-files-found: error
+          retention-days: 7
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: release-notes
@@ -218,6 +237,7 @@ jobs:
       DIST_TAG: ${{ needs.build.outputs.dist_tag }}
       PRIVATE: ${{ needs.build.outputs.private }}
       EXPECTED_SHA256: ${{ needs.build.outputs.sha256 }}
+      EXPECTED_CLI_SUMS: ${{ needs.build.outputs.cli_sums }}
       RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
     steps:
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
@@ -228,6 +248,19 @@ jobs:
         with:
           name: release-notes
           path: release-notes
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: cli-binaries
+          path: cli-release
+
+      - name: Verify the CLI archives
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_CLI_SUMS" =~ ^[0-9a-f]{64}$ ]] || { echo "::error::bad SHA256SUMS checksum from the build job"; exit 1; }
+          cd cli-release
+          [ "$(sha256sum SHA256SUMS | cut -d' ' -f1)" = "$EXPECTED_CLI_SUMS" ] || { echo "::error::SHA256SUMS differs from the build job's"; exit 1; }
+          sha256sum -c SHA256SUMS
+          [ "$(ls | grep -v '^SHA256SUMS$' | sort)" = "$(cut -d' ' -f3 SHA256SUMS | sort)" ] || { echo "::error::unexpected files in the CLI artifact"; ls -la; exit 1; }
 
       - name: Create the GitHub Release
         run: |
@@ -244,5 +277,5 @@ jobs:
             *) flags=(--prerelease --latest=false) ;;
           esac
           if [ "$PRIVATE" = true ]; then flags=(--prerelease --latest=false); fi
-          gh release create "$RELEASE_TAG" "$tarball" "$tarball.sha256" \
+          gh release create "$RELEASE_TAG" "$tarball" "$tarball.sha256" cli-release/* \
             --verify-tag --title "$RELEASE_TAG" --notes-file release-notes/notes.md "${flags[@]}"

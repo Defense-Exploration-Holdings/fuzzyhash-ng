@@ -7,7 +7,7 @@
  *
  * @example
  * ```ts
- * import { averageHash, imageHashDistance } from '@defense-exploration/fuzzyhash-ng/imagehash';
+ * import { averageHash, imageHashDistance } from 'fuzzyhash-ng/imagehash';
  *
  * const image = { width: 2, height: 2, data: new Uint8Array([0, 255, 255, 0]), format: 'L' as const };
  * const h = averageHash(image);

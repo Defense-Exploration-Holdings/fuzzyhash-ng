@@ -6,7 +6,7 @@
  *
  * @example
  * ```ts
- * import { imphash } from '@defense-exploration/fuzzyhash-ng/imphash';
+ * import { imphash } from 'fuzzyhash-ng/imphash';
  *
  * const bytes = await Deno.readFile('program.exe');
  * console.log(imphash(bytes)); // 32 hex characters, or null

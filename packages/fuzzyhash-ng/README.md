@@ -21,7 +21,7 @@ Fuzzy and similarity hashes for JavaScript and TypeScript, compiled from Zig to 
 
 > **Status: in development.** The API may still change before 1.0.
 
-Runs on Node.js 18 or newer, Bun, Deno and evergreen browsers. No runtime dependencies.
+Runs on Node.js 20 or newer, Bun, Deno and evergreen browsers. No runtime dependencies.
 
 ```sh
 npm install fuzzyhash-ng
@@ -160,4 +160,4 @@ nilsimsaCompare(a, b);                           // -128 to 128
 
 ## License
 
-MIT. Code ported from telfhash is used under Apache-2.0 and keeps its own SPDX header. The licences and notices of all ported code ship in `LICENSES/`. See the [repository](https://github.com/Defense-Exploration-Holdings/fuzzyhash-ng) for source and documentation.
+MIT, with ported code under its upstream licence: telfhash (Apache-2.0), capstone's disassembler (BSD-3-Clause and NCSA), Pillow's resampler (MIT-CMU), ImageHash (BSD-2-Clause), the ducc0 FFT (BSD-3-Clause) and the Unicode tables (Unicode-3.0). The SPDX expression is `MIT AND Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND MIT-CMU AND NCSA AND Unicode-3.0`. The licences and notices of all ported code ship in `LICENSES/`. See the [repository](https://github.com/Defense-Exploration-Holdings/fuzzyhash-ng) for source and documentation.

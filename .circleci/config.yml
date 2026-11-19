@@ -3,6 +3,8 @@
 #
 #   check          licence check, Zig and Node tests in debug and in the shipped mode
 #                  (small), the release build, and the example project
+#   node-20        the Node tests on Node 20, the oldest version package.json allows,
+#                  against the WebAssembly modules the check job built
 #   zig-native     Zig tests on macOS and Windows
 #   zig-cross      Zig tests on 32-bit x86, aarch64 and big-endian s390x under QEMU
 #   oracles        builds the pinned ssdeep and TLSH reference programs
@@ -54,6 +56,23 @@ jobs:
       - store_artifacts:
           path: zig-out
           destination: zig-out
+      - persist_to_workspace:
+          root: .
+          paths:
+            - packages/fuzzyhash-ng/wasm
+
+  node-20:
+    docker:
+      - image: cimg/node:20.19
+    resource_class: small
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: node --version
+      - run:
+          name: Node tests
+          command: node --test --test-reporter=spec test/js/
 
   zig-native-macos:
     macos:
@@ -140,6 +159,8 @@ workflows:
   ci:
     jobs:
       - check
+      - node-20:
+          requires: [check]
       - zig-native-macos
       - zig-native-windows
       - zig-cross:
